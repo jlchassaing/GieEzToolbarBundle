@@ -1,0 +1,4 @@
+services:
+#    gie_ez_toolbar.example:
+#        class: Gie\EzToolbarBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

@@ -1,0 +1,3 @@
+gie_ez_toolbar_homepage:
+    path:     /
+    defaults: { _controller: GieEzToolbarBundle:Default:index }

@@ -1,6 +1,14 @@
 services:
+
   Gie\EzToolbarBundle\Controller\ToolbarController:
     autowire: true
-    public: true
+    arguments:
+      $templating: '@templating'
+      $languages: '$languages$'
+
+
+
+
+
 
 

@@ -1,3 +1,3 @@
 gie_ez_toolbar_homepage:
-    path:     /toolbar/action
-    defaults: { _controller: GieEzToolbarBundle:Toolbar:action }
+    path:     /toolbar
+    defaults: { _controller: GieEzToolbarBundle:Toolbar:render }

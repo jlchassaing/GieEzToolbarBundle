@@ -1,0 +1,24 @@
+{% extends '@ezdesign/layout.html.twig' %}
+
+{% form_theme form_preview '@ezdesign/form_fields.html.twig'  %}
+
+{% block navigation %}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+    {% for field in form_preview %}
+        {{ form_widget(field) }}
+    {% endfor %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets filter='scssphp'
+        'bundles/ezplatformformbuilder/scss/form.preview.scss'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}

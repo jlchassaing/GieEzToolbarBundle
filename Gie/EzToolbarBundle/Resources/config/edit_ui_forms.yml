@@ -1,0 +1,5 @@
+system:
+  site_group:
+    admin_ui_forms:
+      content_edit_form_templates:
+        - { template: '@design/content/form_fields.html.twig', priority: 0 }

@@ -1,0 +1,4 @@
+ezdesign:
+  template_theme_paths:
+    edit:
+      - '%kernel.root_dir%/../vendor/ezsystems/ezplatform-admin-ui/Resources/views'

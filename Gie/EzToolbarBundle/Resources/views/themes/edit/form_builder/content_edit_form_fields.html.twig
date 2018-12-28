@@ -1,0 +1,65 @@
+{% extends '@EzPlatformAdminUi/content/form_fields.html.twig' %}
+
+{% block ezplatform_fieldtype_ezform_row %}
+    {{ block('form_row_fieldtype') }}
+    {% set root_form_value = form.parent.parent.parent.vars.value %}
+    {% if root_form_value.contentType is defined %}
+        {% set title = root_form_value.contentType.name %}
+    {% else %}
+        {% set content = root_form_value.content is defined ? root_form_value.content : root_form_value.contentDraft %}
+        {% set title = content.versionInfo.name %}
+    {% endif %}
+    <div class="ez-form-builder ez-form-builder--no-value">
+        <div class="ez-form-builder__call-to-action">
+            <p class="ez-form-builder__message ez-form-builder__message--no-value">{{ 'no.fields.in.form'|trans({}, 'form_builder')|desc('There are no fields in this form. Create your form.') }}</p>
+            <button type="button" class="ez-form-builder__btn ez-form-builder__btn--create" data-open-form-builder>
+                <svg class="ez-icon ez-form-builder__btn-icon">
+                    <use xlink:href="/bundles/ezplatformadminui/img/ez-icons.svg#create"></use>
+                </svg>
+                {{ 'create.form'|trans({}, 'form_builder')|desc('Create a form') }}
+            </button>
+        </div>
+        <div class="ez-form-builder__form-builder-modal ez-form-builder-modal" tabindex="-1">
+            <div class="ez-form-builder-modal__dialog">
+                <div class="ez-form-builder-modal__content">
+                    <div class="ez-form-builder-modal__header">
+                        <button type="button" class="ez-form-builder-modal__btn ez-form-builder-modal__btn--back" data-close-form-builder>
+                            <svg class="ez-icon ez-form-builder-modal__icon">
+                                <use xlink:href="/bundles/ezplatformadminui/img/ez-icons.svg#back"></use>
+                            </svg>
+                        </button>
+                        <h3 class="ez-form-builder-modal__headline">
+                <span class="ez-form-builder-modal__title">
+                    <span class="ez-form-builder-modal__content-title">{{ title }}</span>
+                    <span class="ez-form-builder-modal__field-title">{{ label }}</span>
+                </span>
+                        </h3>
+                    </div>
+                    <div class="ez-form-builder-modal__body">
+                        <div id="ez-form-builder-root"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ez-form-builder-preview">
+            <iframe class="border-0 ez-form-builder-preview__iframe" width="100%" sandbox="allow-scripts allow-same-origin" name="form-preview" data-ezform-preview></iframe>
+            <div class="ez-form-builder-preview__preloader">
+                <svg class="ez-icon ez-spin ez-icon--secondary">
+                    <use xlink:href="/bundles/ezplatformadminui/img/ez-icons.svg#spinner"></use>
+                </svg>
+            </div>
+            <div class="ez-form-builder-preview__actions">
+                <button type="button" class="ez-form-builder-preview__action ez-form-builder-preview__action--edit btn btn-primary ez-btn--edit" data-open-form-builder>
+                    <svg class="ez-icon ez-icon--light ez-icon--medium ez-form-builder-preview__icon">
+                        <use xlink:href="/bundles/ezplatformadminui/img/ez-icons.svg#edit"></use>
+                    </svg>
+                </button>
+                <button type="button" class="ez-form-builder-preview__action ez-form-builder-preview__action--trash btn btn-secondary ez-btn--trash">
+                    <svg class="ez-icon ez-icon--light ez-icon--medium ez-form-builder-preview__icon">
+                        <use xlink:href="/bundles/ezplatformadminui/img/ez-icons.svg#trash"></use>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

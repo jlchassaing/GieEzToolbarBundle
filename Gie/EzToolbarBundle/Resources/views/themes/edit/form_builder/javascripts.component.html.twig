@@ -1,0 +1,11 @@
+<script type="text/javascript">
+    window.eZ.addConfig('formBuilder.config', JSON.parse('{{ config|json_encode|raw }}'));
+</script>
+
+{% javascripts
+    '@EzPlatformFormBuilderBundle/Resources/public/js/modules/FormBuilder.module.js'
+    '@EzPlatformFormBuilderBundle/Resources/public/js/fieldType/ezform.js'
+    '@EzPlatformFormBuilderBundle/Resources/public/js/form.builder.create.js'
+%}
+    <script src="{{ asset_url }}"></script>
+{% endjavascripts %}

@@ -113,8 +113,12 @@ class ToolbarController extends Controller
         {
             $contentTypes = $this->getCanPublishContentTypes($parentLocation);
 
-            $form = $this->formFactory->createContent();
+            $contentCreate = new ContentCreateData();
+            $contentCreate->setParentLocation($parentLocation);
 
+            $form = $this->formFactory->createContent($contentCreate);
+
+            $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
                 $result = $this->submitHandler->handle($form, function (ContentCreateData $data) {
@@ -141,45 +145,7 @@ class ToolbarController extends Controller
         return $response;
     }
 
-    public function actionAction(Request $request)
-    {
-        $response = new Response();
 
-
-        if ($this->permissionResolver->hasAccess('toolbar', 'use'))
-        {
-
-            $form = $this->formFactory->createContent();
-
-            if ( $form->isSubmitted() && $form->isValid() )
-            {
-                $result = $this->submitHandler->handle( $form, function ( ContentCreateData $data ) {
-                    $contentType    = $data->getContentType();
-                    $language       = $data->getLanguage();
-                    $parentLocation = $data->getParentLocation();
-
-
-                    return $this->redirectToRoute( 'ez_content_create_no_draft', [
-                        'contentTypeIdentifier' => $contentType->identifier,
-                        'language'              => $language->languageCode,
-                        'parentLocationId'      => $parentLocation->id,
-                    ] );
-                } );
-
-                if ( $result instanceof Response )
-                {
-                    return $result;
-                }
-            }
-            else
-            {
-                $response->setContent( $this->templating->render("@GieEzToolbar/toolbar/toolbar.html.twig",
-                    ['form' => $form->createView()]));
-                return $response;
-            }
-
-        }
-    }
 
     /**
      * @param Location $parentLocaiton

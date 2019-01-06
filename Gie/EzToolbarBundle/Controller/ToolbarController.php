@@ -116,6 +116,7 @@ class ToolbarController extends Controller
             $contentCreate = new ContentCreateData();
             $contentCreate->setParentLocation($parentLocation);
 
+
             $form = $this->formFactory->createContent($contentCreate);
 
             $form->handleRequest($request);
@@ -139,8 +140,10 @@ class ToolbarController extends Controller
                 }
             }
 
-            $response->setContent( $this->templating->render("@GieEzToolbar/toolbar/toolbar.html.twig",
-                ['form' => $form->createView()]));
+            $response->setContent( $this->templating->render("@ezdesign/toolbar/toolbar.html.twig",
+                ['form' => $form->createView(),
+                 'isPublished' => false,
+                ]));
         }
         return $response;
     }

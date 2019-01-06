@@ -41,6 +41,7 @@ class GieEzToolbarExtension extends Extension implements PrependExtensionInterfa
     {
         $this->prependViews($container);
         $this->editUiFormsConfiguration($container);
+        $this->prependEzDesignConfiguration($container);
 
     }
 
@@ -64,5 +65,16 @@ class GieEzToolbarExtension extends Extension implements PrependExtensionInterfa
         $config = Yaml::parseFile($adminUiFormsConfigFile);
         $container->prependExtensionConfig('ezpublish', $config);
         $container->addResource(new FileResource($adminUiFormsConfigFile));
+    }
+
+    /**
+     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     */
+    private function prependEzDesignConfiguration(ContainerBuilder $container)
+    {
+        $eZDesignConfigFile = __DIR__ . '/../Resources/config/ezdesign.yml';
+        $config = Yaml::parseFile($eZDesignConfigFile);
+        $container->prependExtensionConfig('ezdesign', $config['ezdesign']);
+        $container->addResource(new FileResource($eZDesignConfigFile));
     }
 }

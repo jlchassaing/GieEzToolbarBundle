@@ -3,7 +3,7 @@ system:
     content_create_view:
       full:
         ezplatform_admin_ui:
-          template: '@ezdesign/content/content_edit/content_edit.html.twig'
+          template: '@ezdesign/content/content_edit/content_create.html.twig'
           match: true
           params:
-            viewbaseLayout: '@ezdesign/pagelayout.html.twig'
+            viewbaseLayout: '@ezdesign/layout.html.twig'

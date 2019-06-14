@@ -1,0 +1,19 @@
+system:
+  site_group:
+    admin_ui_forms:
+      content_edit_form_templates:
+        - { template: '@ezdesign/content/form_fields.html.twig', priority: 0 }
+    content_edit_view:
+      full:
+        toolbar_edit:
+          template: '@ezdesign/content/edit/edit.html.twig'
+          match: true
+          params:
+            viewbaseLayout: '@ezdesign/ui/layout.html.twig'
+    content_create_view:
+      full:
+        toolbar_create:
+          template: '@ezdesign/content/create/create.html.twig'
+          match: true
+          params:
+            viewbaseLayout: '@ezdesign/ui/layout.html.twig'

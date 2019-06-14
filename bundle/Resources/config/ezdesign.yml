@@ -1,0 +1,8 @@
+ezdesign:
+    design_list:
+        site: [site, toolbar, standard]
+
+ezpublish:
+    system:
+        site_group:
+            design: site

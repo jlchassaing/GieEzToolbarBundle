@@ -1,0 +1,24 @@
+{% trans_default_domain 'ezrepoforms_content' %}
+
+{%- block ezplatform_fieldtype_ezgmaplocation_widget -%}
+    <div class="ez-data-source__map"></div>
+    <div class="ez-data-source__locate-me">
+        <div class="form-control-label">{{ 'content.field_type.ezgmaplocation.set_current_location'|trans|desc('Set current location') }}</div>
+        <button type="button" class="btn btn-secondary">{{ 'content.field_type.ezgmaplocation.locate_me'|trans|desc('Locate me') }}</button>
+    </div>
+    {{ form_row(form.latitude, { 'attr': { 'data-value': form.latitude.vars.value }}) }}
+    {{ form_row(form.longitude, { 'attr': { 'data-value': form.longitude.vars.value }}) }}
+    <div class="ez-data-source__field ez-data-source__field--address">
+        <div class="ez-data-source__label-wrapper">
+            {{ form_label(form.address, form.address.vars.label, {'label_attr': {'class': 'ez-data-source__label'}}) }}
+        </div>
+        <div class="ez-data-source__input-wrapper">
+            {{ form_widget(form.address, {'attr': {'class': 'ez-data-source__input'}}) }}
+            <button type="button" class="btn btn-secondary btn--search-by-address" title="{{ 'ezgmaplocation.action.search'|trans|desc('Search') }}">
+                <svg class="ez-icon ez-icon--medium ez-icon--light ez-icon-search">
+                    <use xlink:href="{{ asset('bundles/ezplatformadminui/img/ez-icons.svg') }}#search"></use>
+                </svg>
+            </button>
+        </div>
+    </div>
+{%- endblock -%}

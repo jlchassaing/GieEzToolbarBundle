@@ -10,14 +10,6 @@ the bundle is currently being developed and only available on github. So clone t
 git clone https://github.com/jlchassaing/GieEzToolbarBundle.git toolbar
 ```
 
-Add the autoload path to composer : 
-
-```json
-"psr-4": {
-            "AppBundle\\": "src/AppBundle/",
-            "Gie\\": "src/toolbar/Gie/"
-        },
-```
 
 Load the bundle in app/AppKernel.php at the end of the registerBundles function :
 
@@ -29,8 +21,7 @@ The routing file must be loaded in app/config/routing.yml file :
 
 ```yaml
 _gieeztoolbarRoutes:
-    resource: "@GieEzToolbarBundle/Resources/config/routing/routing.yml"
-    prefix:   /
+    resource: "@GieEzToolbarBundle/Resources/config/routing.yml"
 ```
 
 Add the toolbar edit to the pagelayout. 

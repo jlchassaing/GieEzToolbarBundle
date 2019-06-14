@@ -1,0 +1,17 @@
+{%- block ezplatform_fieldtype_ezrichtext_widget -%}
+    {#{% set attr = attr|merge({'hidden': 'hidden'}) %}#}
+    {{- form_widget(form, {'attr': attr}) -}}
+    {% set root_form = form.parent.parent.parent %}
+    {% set udw_context = {
+        'languageCode': root_form.vars.languageCode,
+    } %}
+    <div class="hidden" data-udw-config-name="richtext_embed" data-udw-config="{{ ez_udw_config('richtext_embed', udw_context) }}"></div>
+    <div class="hidden" data-udw-config-name="richtext_embed_image" data-udw-config="{{ ez_udw_config('richtext_embed_image', udw_context) }}"></div>
+    <div class="ez-data-source__richtext" id="{{ form.vars.id }}__editable"></div>
+    {% if ez_user_settings['character_counter'] == 'enabled' %}
+        <div class="ez-character-counter">
+            <span class="ez-character-counter__word-count">0</span> {{ 'character_counter.words'|trans|desc('words') }}
+            <span class="ez-character-counter__character-count">0</span> {{ 'character_counter.characters'|trans|desc('characters') }}
+        </div>
+    {% endif %}
+{%- endblock -%}

@@ -2,6 +2,7 @@
 
 namespace Gie\EzToolbarBundle\Controller;
 
+use eZ\Publish\API\Repository\Values\Content\Location;
 use EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentCreateData;
 use EzSystems\EzPlatformAdminUi\Form\SubmitHandler;
 use EzSystems\EzPlatformAdminUi\Form\Type\ContentType\ContentTypeChoiceType;
@@ -83,26 +84,21 @@ class ToolbarController extends Controller
     }
 
 
-    public function renderAction(Request $request, $locationId = null)
+    public function renderAction(Request $request, $pathString = null)
     {
         $response = new Response();
-        $parentLocation = $this->getCurrentLocation($locationId);
 
         if ($this->permissionResolver->hasAccess('toolbar', 'use'))
         {
-            $contentCreateData = new ContentCreateData(null,$parentLocation,null);
+            $contentCreateData = new ContentCreateData();
+            $contentCreateData->setParentLocation(
+                $this->getCurrentLocation($pathString)
+            );
+            $formCreateContent = $this->formFactory->createContent($contentCreateData);
 
-            $contentCreate = new ContentCreateData();
-            $contentCreate->setParentLocation($parentLocation);
-            $form = $this->formFactory->createContent($contentCreateData);
-
-            $options = $form->get('content_type')->getconfig()->getOptions();
-            $options['expanded'] = false;
-            $form->add('content_type', ContentTypeChoiceType::class, $options);
-
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                return $this->submitHandler->handle($form, function (ContentCreateData $data) {
+            $formCreateContent->handleRequest($request);
+            if ($formCreateContent->isSubmitted() && $formCreateContent->isValid()) {
+                return $this->submitHandler->handle($formCreateContent, function (ContentCreateData $data) {
                     $contentType = $data->getContentType();
                     $language = $data->getLanguage();
                     $parentLocation = $data->getParentLocation();
@@ -115,37 +111,14 @@ class ToolbarController extends Controller
                 });
             }
 
+            $options = $formCreateContent->get('content_type')->getconfig()->getOptions();
+            $options['expanded'] = false;
+            $formCreateContent->add('content_type', ContentTypeChoiceType::class, $options);
+
             $response->setContent( $this->templating->render("@ezdesign/toolbar/toolbar.html.twig",
-                ['form' => $form->createView(),
+                ['formCreateContent' => $formCreateContent->createView(),
                  'isPublished' => false,
                 ]));
-        }
-        return $response;
-    }
-
-
-        if ($this->permissionResolver->hasAccess('toolbar', 'use'))
-        {
-            $form = $this->formFactory->createContent();
-            $form->handleRequest($request);
-
-            if ( $form->isSubmitted() && $form->isValid() )
-            {
-                return $this->submitHandler->handle( $form, function ( ContentCreateData $data ) {
-                    $contentType    = $data->getContentType();
-                    $language       = $data->getLanguage();
-                    $parentLocation = $data->getParentLocation();
-
-                    return $this->redirectToRoute( 'ez_content_create_no_draft', [
-                        'contentTypeIdentifier' => $contentType->identifier,
-                        'language'              => $language->languageCode,
-                        'parentLocationId'      => $parentLocation->id,
-                    ] );
-                } );
-            }
-
-            $response->setContent( $this->templating->render("@GieEzToolbar/toolbar/toolbar.html.twig",
-                ['form' => $form->createView()]));
         }
         return $response;
     }
@@ -165,10 +138,14 @@ class ToolbarController extends Controller
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      */
-    protected function getCurrentLocation($locationId = null)
+    protected function getCurrentLocation($pathString)
     {
-        if ($locationId !== null && is_integer($locationId))
+        if ($pathString !== null)
         {
+            if ($pathString instanceof Location) {
+                return $pathString;
+            }
+            $locationId = array_reverse(explode('/',trim($pathString,'/')))[0];
             return $this->locationService->loadLocation($locationId);
         }
         return $this->getRootLocation();

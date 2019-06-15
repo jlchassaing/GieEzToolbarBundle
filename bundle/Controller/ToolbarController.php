@@ -2,8 +2,10 @@
 
 namespace Gie\EzToolbarBundle\Controller;
 
+use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentCreateData;
+use EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentEditData;
 use EzSystems\EzPlatformAdminUi\Form\SubmitHandler;
 use EzSystems\EzPlatformAdminUi\Form\Type\ContentType\ContentTypeChoiceType;
 use \Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,6 +29,11 @@ class ToolbarController extends Controller
      * @var LocationService
      */
     private $locationService;
+
+    /**
+     * @var \eZ\Publish\API\Repository\ContentService
+     */
+    private $contentService;
 
     /**
      * @var PermissionResolver
@@ -58,6 +65,7 @@ class ToolbarController extends Controller
      * ToolbarController constructor.
      * @param \Symfony\Component\Templating\EngineInterface $templating
      * @param \eZ\Publish\API\Repository\LocationService $locationService
+     * @param \eZ\Publish\API\Repository\ContentService $contentService
      * @param \eZ\Publish\API\Repository\PermissionResolver $permissionResolver
      * @param \EzSystems\EzPlatformAdminUi\Form\SubmitHandler $submitHandler
      * @param \EzSystems\EzPlatformAdminUi\Form\Factory\FormFactory $formFactory
@@ -67,6 +75,7 @@ class ToolbarController extends Controller
     public function __construct(
         EngineInterface $templating,
         LocationService $locationService,
+        ContentService $contentService,
         PermissionResolver $permissionResolver,
         SubmitHandler $submitHandler,
         FormFactory $formFactory,
@@ -76,6 +85,7 @@ class ToolbarController extends Controller
     {
         $this->templating = $templating;
         $this->locationService = $locationService;
+        $this->contentService = $contentService;
         $this->permissionResolver = $permissionResolver;
         $this->submitHandler = $submitHandler;
         $this->formFactory = $formFactory;
@@ -90,11 +100,13 @@ class ToolbarController extends Controller
 
         if ($this->permissionResolver->hasAccess('toolbar', 'use'))
         {
+            $currentLocation = $this->getCurrentLocation($pathString);
             $contentCreateData = new ContentCreateData();
-            $contentCreateData->setParentLocation(
-                $this->getCurrentLocation($pathString)
-            );
+            $contentCreateData->setParentLocation($currentLocation);
             $formCreateContent = $this->formFactory->createContent($contentCreateData);
+            $formEditContent = $this->formFactory->contentEdit(
+                $this->getContentEditData($currentLocation)
+            );
 
             $formCreateContent->handleRequest($request);
             if ($formCreateContent->isSubmitted() && $formCreateContent->isValid()) {
@@ -117,6 +129,7 @@ class ToolbarController extends Controller
 
             $response->setContent( $this->templating->render("@ezdesign/toolbar/toolbar.html.twig",
                 ['formCreateContent' => $formCreateContent->createView(),
+                 'formContentEdit' => $formEditContent->createView(),
                  'isPublished' => false,
                 ]));
         }
@@ -126,7 +139,7 @@ class ToolbarController extends Controller
     /**
      * @return \eZ\Publish\API\Repository\Values\Content\Location
      */
-    protected function getRootLocation()
+    private function getRootLocation()
     {
         return $this->globalHelper->getRootLocation();
     }
@@ -138,7 +151,7 @@ class ToolbarController extends Controller
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      */
-    protected function getCurrentLocation($pathString)
+    private function getCurrentLocation($pathString)
     {
         if ($pathString !== null)
         {
@@ -150,5 +163,19 @@ class ToolbarController extends Controller
         }
         return $this->getRootLocation();
     }
+
+    /**
+     * @param \eZ\Publish\API\Repository\Values\Content\Location $location
+     * @return \EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentEditData
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
+     */
+    private function getContentEditData(Location $location)
+    {
+        $content = $this->contentService->loadContent($location->contentId);
+        return new ContentEditData($content->contentInfo,$content->getVersionInfo(),null,$location);
+    }
+
+
 
 }

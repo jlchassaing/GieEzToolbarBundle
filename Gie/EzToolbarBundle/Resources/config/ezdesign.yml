@@ -1,7 +1,0 @@
-ezdesign:
-  design_list:
-    main: [frontedit,admin, standard]
-  templates_theme_paths:
-    frontedit:
-      - '%kernel.root_dir%/../vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/views'
-      - '%kernel.root_dir%/../vendor/ezsystems/repository-forms/bundle/Resources/views'

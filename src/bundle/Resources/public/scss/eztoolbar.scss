@@ -1,0 +1,34 @@
+#toolbar_layout{
+  background-color: hsl(213,100%,75%);
+  font-family: "DejaVu Sans",Arial, Helvetica, sans-serif;
+  line-height: 40px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0 10px;
+  .toolbar__title {
+    font-weight: lighter;
+    font-size:1.5em;
+    color:  white;
+  }
+  form{
+    display: inline-block;
+  }
+
+  #toolbar div{
+    display: inline-block;
+    select {
+      display: inline-block;
+      margin: 0 5px;
+    }
+    button {
+      display: inline-block;
+      margin: 0 5px;
+    }
+  }
+}
+
+body {
+  margin-top: 50px !important;
+}

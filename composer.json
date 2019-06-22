@@ -1,6 +1,11 @@
 {
   "name": "jlchassaing/gie_eztoolbar",
   "description": "Give the ability to create, edit, delete content from the front end, being logged in but without having to log in backoffice",
-  "autoload": {"psr-4": {"Gie\\EzToolbarBundle\\" :  "bundle/"}}
+  "autoload": {
+    "psr-4": {
+      "Gie\\EzToolbarBundle\\" :  "src/bundle/",
+      "Gie\\EzToolbar\\" : "src/lib/"
+    }
+  }
 
 }

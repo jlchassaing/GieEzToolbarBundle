@@ -1,8 +1,0 @@
-{{ encore_entry_link_tags('eztoolbar-layout-css', null, 'ezplatform') }}
-{#% form_theme form '@GieEzToolbar/form/toolbar_form.html.twig' %#}
-<div id="toolbar">TOOLBAR :
-    {{ form_start(formCreateContent, { 'action': path('gie_ez_toolbar_homepage') }) }}
-    {{ form_widget(formCreateContent.content_type) }}
-    {{ form_widget(formCreateContent.language) }}
-    {{ form_end(formCreateContent) }}
-</div>

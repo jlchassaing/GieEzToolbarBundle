@@ -1,0 +1,27 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+
+  Gie\EzToolbarBundle\Controller\ToolbarController:
+    public: true
+    arguments:
+      $languages: '$languages$'
+
+  Gie\EzToolbar\Form\Type\ToolbarType:
+    arguments:
+      $contentTypeChoiceLoader: '@EzSystems\EzPlatformAdminUi\Form\Type\ChoiceList\Loader\ContentTypeChoiceLoader'
+      $languageChoiceLoader: '@EzSystems\EzPlatformAdminUi\Form\Type\ChoiceList\Loader\LanguageChoiceLoader'
+    tags:
+      - { name: form.type }
+
+
+
+
+
+
+
+
+

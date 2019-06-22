@@ -21,6 +21,16 @@
   <target>Toolbar / Use</target>
   <note>key: role.policy.toolbar.use</note>
 </trans-unit>
+<trans-unit id="b9db8a148ed9b69e04b97235b0ec5051fb95c714" resname="eztoolbar.create">
+  <source>Create</source>
+  <target>Create</target>
+  <note>key: eztoolbar.create</note>
+</trans-unit>
+<trans-unit id="eeb2d393413a3137b10a27e0dfb1ebdb743995a4" resname="eztoolbar.edit">
+  <source>Edit</source>
+  <target>Edit</target>
+  <note>key: eztoolbar.edit</note>
+</trans-unit>
     </body>
   </file>
 </xliff>

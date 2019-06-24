@@ -1,0 +1,20 @@
+{%- block button_widget -%}
+    {%- if label is empty -%}
+        {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+                '%name%': name,
+                '%id%': id,
+            }) %}
+        {%- elseif label is same as(false) -%}
+            {% set translation_domain = false %}
+        {%- else -%}
+            {% set label = name|humanize %}
+        {%- endif -%}
+    {%- endif -%}
+    {%- set icon = label == 'eztoolbar.edit' ? 'edit' : 'create' -%}
+    <button type="{{ type|default('button') }}" class="toolbar__button" {{ block('button_attributes') }}>
+        <svg class="ez-icon ez-icon-edit">
+            <use xlink:href="{{ '/bundles/ezplatformadminui/img/ez-icons.svg#' ~ icon }}"></use>
+        </svg> {{ translation_domain is same as(false) ? label : label|trans({}, translation_domain) }}
+    </button>
+{%- endblock button_widget -%}

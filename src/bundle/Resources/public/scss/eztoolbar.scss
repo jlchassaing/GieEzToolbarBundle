@@ -1,5 +1,5 @@
 #toolbar_layout{
-  background-color: hsl(213,100%,75%);
+  background-color: #a8c8d5;
   font-family: "DejaVu Sans",Arial, Helvetica, sans-serif;
   line-height: 40px;
   position: fixed;
@@ -8,9 +8,10 @@
   right: 0;
   padding: 0 10px;
   .toolbar__title {
-    font-weight: lighter;
-    font-size:1.5em;
-    color:  white;
+    font-weight: normal;
+    font-size:1.8em;
+    vertical-align: bottom;
+    color:  #f15a10;
   }
   form{
     display: inline-block;
@@ -22,9 +23,19 @@
       display: inline-block;
       margin: 0 5px;
     }
-    button {
+    .toolbar__button {
       display: inline-block;
       margin: 0 5px;
+      background-color: #f15a10;
+      border: #f15a10;
+      padding: 5px;
+      svg{
+        width: 15px; height:15px;
+      }
+      &:hover {
+        background-color: #cf4c0c;
+        border-color: #c3480b;
+      }
     }
   }
 }

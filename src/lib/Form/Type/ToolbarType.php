@@ -22,30 +22,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ToolbarType extends AbstractType
 {
-    /** @var \eZ\Publish\API\Repository\LanguageService */
-    protected $languageService;
-
     /** @var \Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface */
     private $contentTypeChoiceLoader;
 
-    /** @var \Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface */
-    private $languageChoiceLoader;
-
     /**
      * ToolbarType constructor.
-     * @param \eZ\Publish\API\Repository\LanguageService $languageService
      * @param \Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface $contentTypeChoiceLoader
-     * @param \Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface $languageChoiceLoader
      */
     public function __construct(
-        LanguageService $languageService,
-        ChoiceLoaderInterface $contentTypeChoiceLoader,
-        ChoiceLoaderInterface $languageChoiceLoader
+        ChoiceLoaderInterface $contentTypeChoiceLoader
 
     ) {
-        $this->languageService = $languageService;
         $this->contentTypeChoiceLoader = $contentTypeChoiceLoader;
-        $this->languageChoiceLoader = $languageChoiceLoader;
     }
 
     /**
@@ -74,11 +62,6 @@ class ToolbarType extends AbstractType
             ->add(
                 'content',
                 ContentType::class,
-                ['label' => false]
-            )
-            ->add(
-                'language',
-                HiddenType::class,
                 ['label' => false]
             )
             ->add(

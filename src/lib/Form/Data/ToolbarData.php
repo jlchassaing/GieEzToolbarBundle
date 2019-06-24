@@ -11,6 +11,7 @@ use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Language;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use eZ\Publish\API\Repository\Values\ContentType\ContentType;
+use eZ\Publish\Core\FieldType\Time\Value;
 
 class ToolbarData
 {
@@ -28,11 +29,6 @@ class ToolbarData
      * @var \eZ\Publish\API\Repository\Values\ContentType\ContentType|null
      */
     private $contentType;
-
-    /**
-     * @var string
-     */
-    private $language;
 
     private $create;
 

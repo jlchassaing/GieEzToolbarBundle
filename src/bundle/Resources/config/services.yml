@@ -4,18 +4,28 @@ services:
     autoconfigure: true
     public: false
 
-
   Gie\EzToolbarBundle\Controller\ToolbarController:
     public: true
     arguments:
       $languages: '$languages$'
+      $actionDispatcher: "@ezrepoforms.action_dispatcher.content"
 
   Gie\EzToolbar\Form\Type\ToolbarType:
     arguments:
       $contentTypeChoiceLoader: '@EzSystems\EzPlatformAdminUi\Form\Type\ChoiceList\Loader\ContentTypeChoiceLoader'
-      $languageChoiceLoader: '@EzSystems\EzPlatformAdminUi\Form\Type\ChoiceList\Loader\LanguageChoiceLoader'
+
     tags:
       - { name: form.type }
+
+  Gie\EzToolbar\Form\Event\UrlRedirectProcessor:
+
+  Gie\EzToolbar\Manager\ToolbarManager:
+
+  Gie\EzToolbar\Templating\Twig\ToolbarExtension:
+    tags:
+      - {name: twig.extension}
+
+
 
 
 

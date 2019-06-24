@@ -1,5 +1,6 @@
 gie_ez_toolbar_homepage:
     path:     /toolbar
+    methods: [POST]
     defaults: { _controller: GieEzToolbarBundle:Toolbar:render }
 
 gie_ez_toolbar_submit:

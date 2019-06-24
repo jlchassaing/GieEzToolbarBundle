@@ -7,11 +7,16 @@ use eZ\Publish\API\Repository\ContentTypeService;
 use eZ\Publish\API\Repository\LanguageService;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use EzSystems\EzPlatformAdminUi\Form\SubmitHandler;
+use EzSystems\EzPlatformAdminUiBundle\Controller\Controller;
+use EzSystems\RepositoryForms\Data\Content\CreateContentDraftData;
+use EzSystems\RepositoryForms\Form\ActionDispatcher\ActionDispatcherInterface;
+use EzSystems\RepositoryForms\Form\Type\Content\ContentDraftCreateType;
 use Gie\EzToolbar\Form\Data\ToolbarData;
 use eZ\Publish\API\Repository\LocationService;
 use eZ\Publish\API\Repository\PermissionResolver;
 use eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper;
 use Gie\EzToolbar\Form\Type\ToolbarType;
+use Gie\EzToolbar\Manager\ToolbarManager;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 
-class ToolbarController
+class ToolbarController extends Controller
 {
 
     /**
@@ -74,6 +79,16 @@ class ToolbarController
     private $globalHelper;
 
     /**
+     * @var \EzSystems\RepositoryForms\Form\ActionDispatcher\ActionDispatcherInterface
+     */
+    private $actionDispatcher;
+
+    /**
+     * @var \Gie\EzToolbar\Manager\ToolbarManager
+     */
+    private $toolbarManager;
+
+    /**
      * @var array
      */
     private $languages;
@@ -92,6 +107,7 @@ class ToolbarController
      * @param \Symfony\Component\Routing\RouterInterface $router
      * @param \eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper $globalHelper
      * @param array $languages
+     *
      */
     public function __construct(
         EngineInterface $templating,
@@ -104,6 +120,8 @@ class ToolbarController
         FormFactory $factory,
         RouterInterface $router,
         GlobalHelper $globalHelper,
+        ActionDispatcherInterface $actionDispatcher,
+        ToolbarManager $toolbarManager,
         array $languages
     )
     {
@@ -117,6 +135,8 @@ class ToolbarController
         $this->factory = $factory;
         $this->router = $router;
         $this->globalHelper = $globalHelper;
+        $this->actionDispatcher = $actionDispatcher;
+        $this->toolbarManager = $toolbarManager;
         $this->languages = $languages;
     }
 
@@ -125,39 +145,56 @@ class ToolbarController
     {
         $response = new Response();
 
-        if ($this->permissionResolver->hasAccess('toolbar', 'use'))
+        if ($this->toolbarManager->canUse())
         {
-            $currentLocation = $this->getCurrentLocation($pathString);
-
             $toolbarData = new ToolbarData();
-            $toolbarData->setParentLocation($currentLocation);
-            $toolbarData->setContent($this->contentService->loadContent($currentLocation->contentId));
+            $toolbarForm = $this->toolbarManager
+                ->initToolbarForm($toolbarData)
+                ->handleRequest($request)
+                ->getToolbarForm();
 
-            $toolbarData->setLanguage($this->languages[0]);
-
-            $name = StringUtil::fqcnToBlockPrefix(ToolbarType::class);
-            $toolbarForm = $this->factory->createNamed($name,ToolbarType::class, $toolbarData);
-
-            $toolbarForm->handleRequest($request);
             if ($toolbarForm->isSubmitted() && $toolbarForm->isValid()) {
 
-                return $this->submitHandler->handle($toolbarForm, function (ToolbarData $data) {
+                $nextAction = $toolbarForm->getClickedButton()->getName();
+                $currentLanguage = $this->languageService->loadLanguage($this->languages[0]);
+                $data = $this->toolbarManager->getToolbarData();
 
                     $contentType = $data->getContentType();
-                    $language = $data->getLanguage();
                     $parentLocation = $data->getParentLocation();
+                    $content = $data->getContent();
 
-                    return new RedirectResponse($this->router->generate('ez_content_create_no_draft', [
-                        'contentTypeIdentifier' => $contentType->identifier,
-                        'language' => $language->languageCode,
-                        'parentLocationId' => $parentLocation->id,
-                    ]));
-                });
+                    if ($nextAction === 'create') {
+                        return new RedirectResponse($this->router->generate('ez_content_create_no_draft', [
+                            'contentTypeIdentifier' => $contentType->identifier,
+                            'language' => $currentLanguage->languageCode,
+                            'parentLocationId' => $parentLocation->id,
+                        ]));
+                    }
+
+                    $createContentDraft = new CreateContentDraftData();
+                    $contentInfo = $content->contentInfo;
+                    $createContentDraft->contentId = $content->id;
+
+                    $createContentDraft->fromVersionNo = $contentInfo->currentVersionNo;
+                    $createContentDraft->fromLanguage = $contentInfo->mainLanguageCode;
+
+
+                    $form = $this->createForm(
+                        ContentDraftCreateType::class,
+                        $createContentDraft,
+                        [
+                            'action' => $this->generateUrl('ez_content_draft_create'),
+                        ]
+                    );
+
+                    $this->actionDispatcher->dispatchFormAction($form, $createContentDraft, 'createDraft');
+                    if ($response = $this->actionDispatcher->getResponse()) {
+                        return $response;
+                    }
+
             }
 
-            $response->setContent( $this->templating->render("@ezdesign/toolbar/toolbar.html.twig",
-                ['form' => $toolbarForm->createView(),
-                ]));
+            $response = $this->redirectToLocation($this->toolbarManager->getLocation());
         }
         return $response;
     }

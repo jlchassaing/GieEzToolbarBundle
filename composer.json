@@ -1,6 +1,18 @@
 {
   "name": "jlchassaing/gie_eztoolbar",
-  "description": "Give the ability to create, edit, delete content from the front end, being logged in but without having to log in backoffice",
+  "description": "Give the ability to create, edit, delete content from the front end, being logged in but without having to log in back-office",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jean-Luc Chassaing"
+    }
+  ],
+  "type": "ezplatform-bundle",
+  "keywords": [
+    "ezplatform",
+    "ezpublish",
+    "editing"
+  ],
   "autoload": {
     "psr-4": {
       "Gie\\EzToolbarBundle\\" :  "src/bundle/",
@@ -17,7 +29,7 @@
     "ezsystems/ezplatform-standard-design": "~0.2.0",
     "ezsystems/ezplatform-user": "~1.0.2",
     "ezsystems/ezpublish-kernel": "~7.5.1",
-    "ezsystems/repository-forms": "~2.5.0",
+    "ezsystems/repository-forms": "~2.5.0"
   }
 
 }

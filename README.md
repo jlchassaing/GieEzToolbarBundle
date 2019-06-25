@@ -1,22 +1,13 @@
+[![Latest stable](https://img.shields.io/packagist/v/jlchassaing/GieEzToolbarBundle.svg?style=flat-square)](https://packagist.org/packages/jlchassaing/GieEzToolbarBundle)
+[![License](https://img.shields.io/packagist/l/jlchassaing/GieEzToolbarBundle.svg?style=flat-square)](https://packagist.org/packages/jlchassaing/GieEzToolbarBundle)
+
 # GieEzToolbarBundle
 
 Ez Platform 2 toolbar bundle
 
 ## Install
 
-the bundle is currently being developed and only available on github. So clone the repo in src :
 
-```bash
-git clone https://github.com/jlchassaing/GieEzToolbarBundle.git toolbar
-```
-
-### Autoload
-
-You may add the psr-4 composer autoload :
-```json
-            "Gie\\EzToolbar\\" : "src/gietoolbar/src/lib/",
-            "Gie\\EzToolbarBundle\\": "src/gietoolbar/src/bundle/"
-```
 
 ### Add to kernel
 

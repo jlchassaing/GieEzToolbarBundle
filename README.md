@@ -1,5 +1,7 @@
-[![Latest](https://img.shields.io/packagist/v/jlchassaing/gie_eztoolbar.svg?style=flat-square)](https://packagist.org/packages/jlchassaing/gie_eztoolbar)
-[![License](https://img.shields.io/packagist/l/jlchassaing/gie_eztoolbar.svg?style=flat-square)](https://packagist.org/packages/jlchassaing/gie_eztoolbar)
+[![Latest Stable Version](https://poser.pugx.org/jlchassaing/gie_eztoolbar/v/stable)](https://packagist.org/packages/jlchassaing/gie_eztoolbar)
+[![Total Downloads](https://poser.pugx.org/jlchassaing/gie_eztoolbar/downloads)](https://packagist.org/packages/jlchassaing/gie_eztoolbar)
+[![Latest Unstable Version](https://poser.pugx.org/jlchassaing/gie_eztoolbar/v/unstable)](https://packagist.org/packages/jlchassaing/gie_eztoolbar)
+[![License](https://poser.pugx.org/jlchassaing/gie_eztoolbar/license)](https://packagist.org/packages/jlchassaing/gie_eztoolbar)
 
 # GieEzToolbarBundle
 

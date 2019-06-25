@@ -3,6 +3,7 @@
   font-family: "DejaVu Sans",Arial, Helvetica, sans-serif;
   line-height: 40px;
   position: fixed;
+  display:flex;
   top: 0;
   left: 0;
   right: 0;
@@ -37,6 +38,9 @@
         border-color: #c3480b;
       }
     }
+  }
+  .toolbar__user_info{
+    margin-left: auto;
   }
 }
 

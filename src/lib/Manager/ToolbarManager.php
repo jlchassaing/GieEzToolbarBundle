@@ -109,7 +109,10 @@ class ToolbarManager
         }
 
         $name = StringUtil::fqcnToBlockPrefix(ToolbarType::class);
-        $this->toolbarForm = $this->factory->createNamed($name,ToolbarType::class, $toolbarData);
+        $this->toolbarForm = $this->factory->createNamed($name,
+            ToolbarType::class,
+            $toolbarData,
+            ['translation_domain' => 'eztoolbar']);
         return $this;
     }
 

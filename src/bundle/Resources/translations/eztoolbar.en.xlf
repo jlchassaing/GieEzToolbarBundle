@@ -31,6 +31,16 @@
   <target>Edit</target>
   <note>key: eztoolbar.edit</note>
 </trans-unit>
+<trans-unit id="eeb2d393413a3137b10a27e0dfb1ebdb743995a4" resname="eztoolbar.logedinas">
+  <source>Current user : %userName%</source>
+  <target>Current user : %userName%</target>
+  <note>key: eztoolbar.logedinas</note>
+</trans-unit>
+<trans-unit id="eeb2d393413a3137b10a27e0dfb1ebdb743995a4" resname="eztoolbar.logout">
+  <source>Logout</source>
+  <target>Logout</target>
+  <note>key: eztoolbar.logout</note>
+</trans-unit>
     </body>
   </file>
 </xliff>

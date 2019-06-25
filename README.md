@@ -9,7 +9,11 @@ Ez Platform 2 toolbar bundle
 
 ## Install
 
+Install by composer 
 
+```
+composer require jlchassaing/gie_eztoolbar dev-master
+```
 
 ### Add to kernel
 

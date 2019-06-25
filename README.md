@@ -1,5 +1,5 @@
-[![Latest stable](https://img.shields.io/packagist/v/jlchassaing/GieEzToolbarBundle.svg?style=flat-square)](https://packagist.org/packages/jlchassaing/GieEzToolbarBundle)
-[![License](https://img.shields.io/packagist/l/jlchassaing/GieEzToolbarBundle.svg?style=flat-square)](https://packagist.org/packages/jlchassaing/GieEzToolbarBundle)
+[![Latest stable](https://img.shields.io/packagist/v/jlchassaing/gie_eztoolbar.svg?style=flat-square)](https://packagist.org/packages/jlchassaing/gie_eztoolbar)
+[![License](https://img.shields.io/packagist/l/jlchassaing/gie_eztoolbar.svg?style=flat-square)](https://packagist.org/packages/jlchassaing/gie_eztoolbar)
 
 # GieEzToolbarBundle
 

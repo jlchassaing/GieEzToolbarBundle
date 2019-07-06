@@ -9,9 +9,16 @@ declare(strict_types=1);
 namespace Gie\EzToolbar\Form\Type;
 
 use eZ\Publish\API\Repository\LanguageService;
+use eZ\Publish\API\Repository\Values\Content\Location;
+use eZ\Publish\API\Repository\Values\User\Limitation;
+use EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentCreateData;
+use EzSystems\EzPlatformAdminUi\Form\Type\ChoiceList\Loader\ContentCreateContentTypeChoiceLoader;
 use EzSystems\EzPlatformAdminUi\Form\Type\Content\ContentType;
+use EzSystems\EzPlatformAdminUi\Form\Type\Content\Draft\ContentCreateType;
 use EzSystems\EzPlatformAdminUi\Form\Type\Content\LocationType;
 use EzSystems\EzPlatformAdminUi\Form\Type\ContentType\ContentTypeChoiceType;
+use EzSystems\EzPlatformAdminUi\Permission\LookupLimitationsTransformer;
+use EzSystems\EzPlatformAdminUi\Permission\PermissionCheckerInterface;
 use Gie\EzToolbar\Form\Data\ToolbarData;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
@@ -25,23 +32,39 @@ class ToolbarType extends AbstractType
     /** @var \Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface */
     private $contentTypeChoiceLoader;
 
-    /**
-     * ToolbarType constructor.
-     * @param \Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface $contentTypeChoiceLoader
-     */
+    /** @var \EzSystems\EzPlatformAdminUi\Permission\PermissionCheckerInterface */
+    private $permissionChecker;
+
+    /** @var \EzSystems\EzPlatformAdminUi\Permission\LookupLimitationsTransformer */
+    private $lookupLimitationsTransformer;
+
+
     public function __construct(
-        ChoiceLoaderInterface $contentTypeChoiceLoader
 
+        ChoiceLoaderInterface $contentTypeChoiceLoader,
+        PermissionCheckerInterface $permissionChecker,
+        LookupLimitationsTransformer $lookupLimitationsTransformer
     ) {
-        $this->contentTypeChoiceLoader = $contentTypeChoiceLoader;
-    }
 
+        $this->contentTypeChoiceLoader = $contentTypeChoiceLoader;
+        $this->permissionChecker = $permissionChecker;
+        $this->lookupLimitationsTransformer = $lookupLimitationsTransformer;
+    }
     /**
      * @param \Symfony\Component\Form\FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
+        $restrictedContentTypesIds = [];
+
+        /** @var ContentCreateData $contentCreateData */
+        $contentCreateData = $options['data'];
+        if ($location = $contentCreateData->getParentLocation()) {
+            $limitationsValues = $this->getLimitationValuesForLocation($location);
+            $restrictedContentTypesIds = $limitationsValues[Limitation::CONTENTTYPE];
+        }
 
         $builder
             ->add(
@@ -51,7 +74,7 @@ class ToolbarType extends AbstractType
                     'label' => false,
                     'multiple' => false,
                     'expanded' => false,
-                    'choice_loader' => $this->contentTypeChoiceLoader,
+                    'choice_loader' => new ContentCreateContentTypeChoiceLoader($this->contentTypeChoiceLoader, $restrictedContentTypesIds),
                 ]
             )
             ->add(
@@ -89,5 +112,25 @@ class ToolbarType extends AbstractType
                 'data_class' => ToolbarData::class,
                 'translation_domain' => 'forms',
             ]);
+    }
+
+    /**
+     * @param \eZ\Publish\API\Repository\Values\Content\Location $location
+     *
+     * @return array
+     *
+     * @throws \EzSystems\EzPlatformAdminUi\Exception\InvalidArgumentException
+     * @throws \eZ\Publish\API\Repository\Exceptions\BadStateException
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    private function getLimitationValuesForLocation(Location $location): array
+    {
+        $lookupLimitationsResult = $this->permissionChecker->getContentCreateLimitations($location);
+
+        return $this->lookupLimitationsTransformer->getGroupedLimitationValues(
+            $lookupLimitationsResult,
+            [Limitation::CONTENTTYPE, Limitation::LANGUAGE]
+        );
     }
 }

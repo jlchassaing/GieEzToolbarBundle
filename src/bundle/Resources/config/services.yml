@@ -13,7 +13,6 @@ services:
   Gie\EzToolbar\Form\Type\ToolbarType:
     arguments:
       $contentTypeChoiceLoader: '@EzSystems\EzPlatformAdminUi\Form\Type\ChoiceList\Loader\ContentTypeChoiceLoader'
-
     tags:
       - { name: form.type }
 

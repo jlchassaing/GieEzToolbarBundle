@@ -9,8 +9,12 @@ declare(strict_types=1);
 namespace Gie\EzToolbar\Form\Type;
 
 use eZ\Publish\API\Repository\LanguageService;
+use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use eZ\Publish\API\Repository\Values\User\Limitation;
+use eZ\Publish\Core\Limitation\ContentTypeLimitationType;
+use eZ\Publish\Core\Repository\Permission\PermissionResolver;
+use eZ\Publish\SPI\Limitation\Target\Builder\VersionBuilder;
 use EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentCreateData;
 use EzSystems\EzPlatformAdminUi\Form\Type\ChoiceList\Loader\ContentCreateContentTypeChoiceLoader;
 use EzSystems\EzPlatformAdminUi\Form\Type\Content\ContentType;
@@ -38,16 +42,20 @@ class ToolbarType extends AbstractType
     /** @var \EzSystems\EzPlatformAdminUi\Permission\LookupLimitationsTransformer */
     private $lookupLimitationsTransformer;
 
+    /** @var \eZ\Publish\Core\Repository\Permission\PermissionResolver */
+    private $permissionResolver;
 
     public function __construct(
 
         ChoiceLoaderInterface $contentTypeChoiceLoader,
         PermissionCheckerInterface $permissionChecker,
+        PermissionResolver $permissionResolver,
         LookupLimitationsTransformer $lookupLimitationsTransformer
     ) {
 
         $this->contentTypeChoiceLoader = $contentTypeChoiceLoader;
         $this->permissionChecker = $permissionChecker;
+        $this->permissionResolver = $permissionResolver;
         $this->lookupLimitationsTransformer = $lookupLimitationsTransformer;
     }
     /**
@@ -58,12 +66,15 @@ class ToolbarType extends AbstractType
     {
 
         $restrictedContentTypesIds = [];
+        $canEdit = false;
 
-        /** @var ContentCreateData $contentCreateData */
-        $contentCreateData = $options['data'];
-        if ($location = $contentCreateData->getParentLocation()) {
+        /** @var ToolbarData $toolbarData */
+        $toolbarData = $options['data'];
+        if ($location = $toolbarData->getParentLocation()) {
+            $content = $toolbarData->getContent();
             $limitationsValues = $this->getLimitationValuesForLocation($location);
             $restrictedContentTypesIds = $limitationsValues[Limitation::CONTENTTYPE];
+            $canEdit = $this->getCanEdit($location, $content);
         }
 
         $builder
@@ -94,14 +105,17 @@ class ToolbarType extends AbstractType
                     'label' => /** @Desc("Create") */
                         'eztoolbar.create',
                 ]
-            )
-            ->add(
+            );
+        if ($canEdit)
+        {
+            $builder->add(
                 'edit',
                 SubmitType::class,
                 [
                     'label' => 'eztoolbar.edit'
                 ]
             );
+        }
 
     }
 
@@ -132,5 +146,19 @@ class ToolbarType extends AbstractType
             $lookupLimitationsResult,
             [Limitation::CONTENTTYPE, Limitation::LANGUAGE]
         );
+    }
+
+    private function getCanEdit(Location $location, Content $content) {
+        $canEdit = $this->permissionResolver->canUser(
+            'content',
+            'edit',
+            $location->getContentInfo(),
+            [
+                (new VersionBuilder())
+                    ->translateToAnyLanguageOf($content->getVersionInfo()->languageCodes)
+                    ->build(),
+            ]
+        );
+        return $canEdit;
     }
 }

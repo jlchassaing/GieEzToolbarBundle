@@ -9,6 +9,7 @@ namespace Gie\EzToolbar\Manager;
 
 use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\LocationService;
+use eZ\Publish\API\Repository\UserService;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper;
 use eZ\Publish\API\Repository\PermissionResolver;
@@ -50,6 +51,10 @@ class ToolbarManager
      */
     private $location;
 
+
+    /** @var \eZ\Publish\API\Repository\UserService */
+    private $userService;
+
     /**
      * @var \Symfony\Component\Form\FormInterface
      */
@@ -60,12 +65,14 @@ class ToolbarManager
         GlobalHelper $globalHelper,
         ContentService $contentService,
         LocationService $locationService,
+        UserService $userService,
         FormFactory $factory
     ) {
         $this->permissionResolver = $permissionResolver;
         $this->globalHelper = $globalHelper;
         $this->contentService = $contentService;
         $this->locationService = $locationService;
+        $this->userService = $userService;
         $this->factory = $factory;
     }
 
@@ -155,7 +162,16 @@ class ToolbarManager
         return $this;
     }
 
-
+    /**
+     * @return \eZ\Publish\API\Repository\Values\User\User
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    public function getCurrentUser()
+    {
+        return $this->userService->loadUser(
+            $this->permissionResolver->getCurrentUserReference()->getUserId()
+        );
+    }
 
 
 

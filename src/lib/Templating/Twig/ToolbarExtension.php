@@ -45,7 +45,9 @@ class ToolbarExtension extends AbstractExtension
                 ->initToolbarForm()
                 ->getToolbarForm();
             return $this->templating->render("@GieEzToolbar/toolbar/toolbar.html.twig",
-                ['form' => $toolbarForm->createView(),
+                [
+                    'form' => $toolbarForm->createView(),
+                    'currentUser' => $this->toolbarManager->getCurrentUser()
                 ]);
         }
         return null;

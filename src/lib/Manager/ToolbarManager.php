@@ -91,11 +91,12 @@ class ToolbarManager
      */
     public function setLocation(?Location $location = null)
     {
-        if ($location instanceof Location)
-        {
+        if ($location instanceof Location) {
             $this->location = $location;
         }
-         $this->location = $this->globalHelper->getRootLocation();
+        else {
+            $this->location = $this->globalHelper->getRootLocation();
+        }
         return $this;
     }
 

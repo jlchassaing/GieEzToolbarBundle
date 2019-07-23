@@ -41,8 +41,7 @@ class ToolbarExtension extends AbstractExtension
     {
         if ($this->toolbarManager->canUse()) {
             $toolbarForm = $this->toolbarManager
-                ->setLocation($location)
-                ->initToolbarForm()
+                ->initToolbarForm($location)
                 ->getToolbarForm();
             return $this->templating->render("@GieEzToolbar/toolbar/toolbar.html.twig",
                 [

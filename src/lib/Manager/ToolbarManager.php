@@ -87,34 +87,30 @@ class ToolbarManager
 
     /**
      * @param \eZ\Publish\API\Repository\Values\Content\Location|null $location
-     * @return $this
+     * @return \eZ\Publish\API\Repository\Values\Content\Location
      */
     public function setLocation(?Location $location = null)
     {
-        if ($location instanceof Location) {
-            $this->location = $location;
+        if ($location === null) {
+            $location = $this->globalHelper->getRootLocation();
         }
-        else {
-            $this->location = $this->globalHelper->getRootLocation();
-        }
-        return $this;
+        return $this->location = $location;
     }
 
     /**
+     * @param \eZ\Publish\API\Repository\Values\Content\Location
      * @param \Gie\EzToolbar\Form\Data\ToolbarData|null $toolbarData
      * @return $this
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      */
-    public function initToolbarForm(?ToolbarData $toolbarData = null)
+    public function initToolbarForm(?Location $location = null, ?ToolbarData $toolbarData = null)
     {
-        if ($this->location !== null) {
-            $currentLocation = $this->location;
+        $currentLocation = $this->setLocation($location);
 
-            $toolbarData = $toolbarData ?: new ToolbarData();
-            $toolbarData->setParentLocation($currentLocation);
-            $toolbarData->setContent($this->contentService->loadContent($currentLocation->contentId));
-        }
+        $toolbarData = $toolbarData ?: new ToolbarData();
+        $toolbarData->setParentLocation($currentLocation);
+        $toolbarData->setContent($this->contentService->loadContent($currentLocation->contentId));
 
         $name = StringUtil::fqcnToBlockPrefix(ToolbarType::class);
         $this->toolbarForm = $this->factory->createNamed($name,
@@ -156,10 +152,9 @@ class ToolbarManager
     {
         $this->toolbarForm->handleRequest($request);
         $toolBarData = $this->getToolbarData();
-        if ($this->location !== null && $this->location->id !== $toolBarData->getParentLocation()->id)
-        {
-            $this->setLocation($toolBarData->getParentLocation());
-        }
+
+        $this->setLocation($toolBarData->getParentLocation());
+
         return $this;
     }
 

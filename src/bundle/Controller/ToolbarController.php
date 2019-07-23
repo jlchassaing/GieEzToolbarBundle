@@ -8,7 +8,6 @@ use eZ\Publish\API\Repository\LanguageService;
 use eZ\Publish\API\Repository\URLAliasService;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use EzSystems\EzPlatformAdminUi\Form\SubmitHandler;
-use EzSystems\EzPlatformAdminUiBundle\Controller\Controller;
 use EzSystems\RepositoryForms\Data\Content\CreateContentDraftData;
 use EzSystems\RepositoryForms\Form\ActionDispatcher\ActionDispatcherInterface;
 use EzSystems\RepositoryForms\Form\Type\Content\ContentDraftCreateType;
@@ -16,17 +15,14 @@ use Gie\EzToolbar\Form\Data\ToolbarData;
 use eZ\Publish\API\Repository\LocationService;
 use eZ\Publish\API\Repository\PermissionResolver;
 use eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper;
-use Gie\EzToolbar\Form\Type\ToolbarType;
 use Gie\EzToolbar\Manager\ToolbarManager;
 use Symfony\Component\Form\FormFactory;
-use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 
-class ToolbarController extends Controller
+class ToolbarController
 {
 
     /**
@@ -151,93 +147,88 @@ class ToolbarController extends Controller
 
     public function renderAction(Request $request, Location $location)
     {
-        $response = new Response();
-
         if ($this->toolbarManager->canUse())
         {
             $toolbarData = new ToolbarData();
             $toolbarForm = $this->toolbarManager
-                ->initToolbarForm($toolbarData)
+                ->initToolbarForm($location, $toolbarData)
                 ->handleRequest($request)
                 ->getToolbarForm();
 
             if ($toolbarForm->isSubmitted() && $toolbarForm->isValid()) {
 
                 $nextAction = $toolbarForm->getClickedButton()->getName();
-                $currentLanguage = $this->languageService->loadLanguage($this->languages[0]);
                 $data = $this->toolbarManager->getToolbarData();
 
-                    $contentType = $data->getContentType();
-                    $parentLocation = $data->getParentLocation();
-                    $content = $data->getContent();
-
-                    if ($nextAction === 'create') {
-                        return new RedirectResponse($this->router->generate('ez_content_create_no_draft', [
-                            'contentTypeIdentifier' => $contentType->identifier,
-                            'language' => $currentLanguage->languageCode,
-                            'parentLocationId' => $parentLocation->id,
-                        ]));
-                    }
-
-                    $createContentDraft = new CreateContentDraftData();
-                    $contentInfo = $content->contentInfo;
-                    $createContentDraft->contentId = $content->id;
-
-                    $createContentDraft->fromVersionNo = $contentInfo->currentVersionNo;
-                    $createContentDraft->fromLanguage = $contentInfo->mainLanguageCode;
-
-
-                    $form = $this->createForm(
-                        ContentDraftCreateType::class,
-                        $createContentDraft,
-                        [
-                            'action' => $this->generateUrl('ez_content_draft_create'),
-                        ]
-                    );
-
-                    $this->actionDispatcher->dispatchFormAction($form, $createContentDraft, 'createDraft');
-                    if ($response = $this->actionDispatcher->getResponse()) {
-                        return $response;
-                    }
+                return $this->getActionResponse($nextAction, $data);
 
             }
-            $url = $this->urlAliasService->reverseLookup($location);
-            $response = new RedirectResponse($url->path);
         }
-        return $response;
+        return $this->redirectToLocation($location);
     }
 
-
-
-
-
-    /**
-     * @return \eZ\Publish\API\Repository\Values\Content\Location
-     */
-    private function getRootLocation()
+    private function getActionResponse($action, ToolbarData $data)
     {
-        return $this->globalHelper->getRootLocation();
-    }
-
-    /**
-     * @param null $locationId
-     *
-     * @return \eZ\Publish\API\Repository\Values\Content\Location
-     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
-     * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
-     */
-    private function getCurrentLocation($pathString)
-    {
-        if ($pathString !== null)
+        switch ($action)
         {
-            if ($pathString instanceof Location) {
-                return $pathString;
-            } elseif (is_string($pathString) and strlen($pathString) > 0) {
-                $locationId = array_reverse(explode('/',trim($pathString,'/')))[0];
-                return $this->locationService->loadLocation($locationId);
-            }
+            case 'create':
+                return $this->createAction($data);
+            case 'edit':
+                return $this->editAction($data);
         }
-        return $this->getRootLocation();
+        return $this->redirectToLocation($data->getParentLocation());
+    }
+
+    private function createAction(ToolbarData $data)
+    {
+        $contentType = $data->getContentType();
+        $parentLocation = $data->getParentLocation();
+        $currentLanguage = $this->languageService->loadLanguage($this->languages[0]);
+
+        return new RedirectResponse($this->router->generate('ez_content_create_no_draft', [
+            'contentTypeIdentifier' => $contentType->identifier,
+            'language' => $currentLanguage->languageCode,
+            'parentLocationId' => $parentLocation->id,
+        ]));
+
+    }
+
+    private function editAction(ToolbarData $data)
+    {
+        $content = $data->getContent();
+        $createContentDraft = new CreateContentDraftData();
+        $contentInfo = $content->contentInfo;
+        $createContentDraft->contentId = $content->id;
+
+        $createContentDraft->fromVersionNo = $contentInfo->currentVersionNo;
+        $createContentDraft->fromLanguage = $contentInfo->mainLanguageCode;
+
+
+        $form = $this->factory->create(
+            ContentDraftCreateType::class,
+            $createContentDraft,
+            [
+                'action' => $this->router->generate('ez_content_draft_create'),
+            ]
+        );
+
+        $this->actionDispatcher->dispatchFormAction($form, $createContentDraft, 'createDraft');
+        if ($response = $this->actionDispatcher->getResponse()) {
+            return $response;
+        } else {
+            return $this->redirectToLocation($data->getParentLocation());
+        }
+    }
+
+    /**
+     * @param \eZ\Publish\API\Repository\Values\Content\Location $location
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|void
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
+    private function redirectToLocation(Location $location)
+    {
+        $url = $this->urlAliasService->reverseLookup($location);
+        return new RedirectResponse($url->path);
     }
 
 

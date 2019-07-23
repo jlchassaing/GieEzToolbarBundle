@@ -8,17 +8,13 @@ declare(strict_types=1);
 
 namespace Gie\EzToolbar\Form\Type;
 
-use eZ\Publish\API\Repository\LanguageService;
 use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use eZ\Publish\API\Repository\Values\User\Limitation;
-use eZ\Publish\Core\Limitation\ContentTypeLimitationType;
 use eZ\Publish\Core\Repository\Permission\PermissionResolver;
 use eZ\Publish\SPI\Limitation\Target\Builder\VersionBuilder;
-use EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentCreateData;
 use EzSystems\EzPlatformAdminUi\Form\Type\ChoiceList\Loader\ContentCreateContentTypeChoiceLoader;
 use EzSystems\EzPlatformAdminUi\Form\Type\Content\ContentType;
-use EzSystems\EzPlatformAdminUi\Form\Type\Content\Draft\ContentCreateType;
 use EzSystems\EzPlatformAdminUi\Form\Type\Content\LocationType;
 use EzSystems\EzPlatformAdminUi\Form\Type\ContentType\ContentTypeChoiceType;
 use EzSystems\EzPlatformAdminUi\Permission\LookupLimitationsTransformer;
@@ -26,7 +22,6 @@ use EzSystems\EzPlatformAdminUi\Permission\PermissionCheckerInterface;
 use Gie\EzToolbar\Form\Data\ToolbarData;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

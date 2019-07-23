@@ -38,6 +38,12 @@
         border-color: #c3480b;
       }
     }
+    [disabled]{
+      background-color: grey;
+      &:hover {
+        background-color: grey;
+      }
+    }
   }
   .toolbar__user_info{
     margin-left: auto;

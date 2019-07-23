@@ -66,7 +66,8 @@ class ToolbarType extends AbstractType
     {
 
         $restrictedContentTypesIds = [];
-        $canEdit = false;
+        $canEdit = true;
+        $isContainer = false;
 
         /** @var ToolbarData $toolbarData */
         $toolbarData = $options['data'];
@@ -75,6 +76,7 @@ class ToolbarType extends AbstractType
             $limitationsValues = $this->getLimitationValuesForLocation($location);
             $restrictedContentTypesIds = $limitationsValues[Limitation::CONTENTTYPE];
             $canEdit = $this->getCanEdit($location, $content);
+            $isContainer = $content->getContentType()->isContainer;
         }
 
         $builder
@@ -85,6 +87,7 @@ class ToolbarType extends AbstractType
                     'label' => false,
                     'multiple' => false,
                     'expanded' => false,
+                    'disabled' => !$isContainer,
                     'choice_loader' => new ContentCreateContentTypeChoiceLoader($this->contentTypeChoiceLoader, $restrictedContentTypesIds),
                 ]
             )
@@ -104,6 +107,7 @@ class ToolbarType extends AbstractType
                 [
                     'label' => /** @Desc("Create") */
                         'eztoolbar.create',
+                    'disabled' => !$isContainer,
                 ]
             );
         if ($canEdit)

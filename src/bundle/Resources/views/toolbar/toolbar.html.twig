@@ -1,6 +1,6 @@
 {{ encore_entry_link_tags('eztoolbar-layout-css', null, 'ezplatform') }}
 {% form_theme form '@GieEzToolbar/toolbar/form.html.twig' %}
 <div id="toolbar_layout" class="container-fluid" >
-  <span class="toolbar__title">Ez ToolBar </span>{{ form(form, { 'action': path('gie_ez_toolbar_homepage') }) }}
+  <span class="toolbar__title">Ez ToolBar </span>{{ form(form, { 'action': path('gie_ez_toolbar_homepage', {locationId: location.id}) }) }}
   <span class="toolbar__user_info">{{ 'eztoolbar.logedinas'|trans({'%userName%': currentUser.login},'eztoolbar') }} <a href="{{ path('logout') }}">{{ 'eztoolbar.logout'|trans({} ,'eztoolbar') }}</a></span>
 </div>

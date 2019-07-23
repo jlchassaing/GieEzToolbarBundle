@@ -5,6 +5,7 @@ namespace Gie\EzToolbarBundle\Controller;
 use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\ContentTypeService;
 use eZ\Publish\API\Repository\LanguageService;
+use eZ\Publish\API\Repository\URLAliasService;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use EzSystems\EzPlatformAdminUi\Form\SubmitHandler;
 use EzSystems\EzPlatformAdminUiBundle\Controller\Controller;
@@ -52,6 +53,11 @@ class ToolbarController extends Controller
      * @var \eZ\Publish\API\Repository\LanguageService
      */
     private $languageService;
+
+    /**
+     * @var \eZ\Publish\API\Repository\URLAliasService
+     */
+    private $urlAliasService;
 
     /**
      * @var PermissionResolver
@@ -115,6 +121,7 @@ class ToolbarController extends Controller
         LanguageService $languageService,
         ContentService $contentService,
         ContentTypeService $contentTypeService,
+        URLAliasService $urlAliasService,
         PermissionResolver $permissionResolver,
         SubmitHandler $submitHandler,
         FormFactory $factory,
@@ -131,6 +138,7 @@ class ToolbarController extends Controller
         $this->contentTypeService = $contentTypeService;
         $this->languageService = $languageService;
         $this->permissionResolver = $permissionResolver;
+        $this->urlAliasService = $urlAliasService;
         $this->submitHandler = $submitHandler;
         $this->factory = $factory;
         $this->router = $router;
@@ -141,7 +149,7 @@ class ToolbarController extends Controller
     }
 
 
-    public function renderAction(Request $request, $pathString = null)
+    public function renderAction(Request $request, Location $location)
     {
         $response = new Response();
 
@@ -193,8 +201,8 @@ class ToolbarController extends Controller
                     }
 
             }
-
-            $response = $this->redirectToLocation($this->toolbarManager->getLocation());
+            $url = $this->urlAliasService->reverseLookup($location);
+            $response = new RedirectResponse($url->path);
         }
         return $response;
     }

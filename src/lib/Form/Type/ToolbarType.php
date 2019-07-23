@@ -40,6 +40,13 @@ class ToolbarType extends AbstractType
     /** @var \eZ\Publish\Core\Repository\Permission\PermissionResolver */
     private $permissionResolver;
 
+    /**
+     * ToolbarType constructor.
+     * @param \Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface $contentTypeChoiceLoader
+     * @param \EzSystems\EzPlatformAdminUi\Permission\PermissionCheckerInterface $permissionChecker
+     * @param \eZ\Publish\Core\Repository\Permission\PermissionResolver $permissionResolver
+     * @param \EzSystems\EzPlatformAdminUi\Permission\LookupLimitationsTransformer $lookupLimitationsTransformer
+     */
     public function __construct(
 
         ChoiceLoaderInterface $contentTypeChoiceLoader,
@@ -53,9 +60,14 @@ class ToolbarType extends AbstractType
         $this->permissionResolver = $permissionResolver;
         $this->lookupLimitationsTransformer = $lookupLimitationsTransformer;
     }
+
     /**
      * @param \Symfony\Component\Form\FormBuilderInterface $builder
      * @param array $options
+     * @throws \EzSystems\EzPlatformAdminUi\Exception\InvalidArgumentException
+     * @throws \eZ\Publish\API\Repository\Exceptions\BadStateException
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -118,6 +130,9 @@ class ToolbarType extends AbstractType
 
     }
 
+    /**
+     * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver

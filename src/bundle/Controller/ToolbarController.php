@@ -103,6 +103,7 @@ class ToolbarController
      * @param \eZ\Publish\API\Repository\LanguageService $languageService
      * @param \eZ\Publish\API\Repository\ContentService $contentService
      * @param \eZ\Publish\API\Repository\ContentTypeService $contentTypeService
+     * @param \eZ\Publish\API\Repository\URLAliasService $urlAliasService
      * @param \eZ\Publish\API\Repository\PermissionResolver $permissionResolver
      * @param \EzSystems\EzPlatformAdminUi\Form\SubmitHandler $submitHandler
      * @param \Symfony\Component\Form\FormFactory $factory
@@ -144,7 +145,14 @@ class ToolbarController
         $this->languages = $languages;
     }
 
-
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param \eZ\Publish\API\Repository\Values\Content\Location $location
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response|void|null
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
+     */
     public function renderAction(Request $request, Location $location)
     {
         if ($this->toolbarManager->canUse())
@@ -167,6 +175,12 @@ class ToolbarController
         return $this->redirectToLocation($location);
     }
 
+    /**
+     * @param $action
+     * @param \Gie\EzToolbar\Form\Data\ToolbarData $data
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response|void|null
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
     private function getActionResponse($action, ToolbarData $data)
     {
         switch ($action)
@@ -179,6 +193,11 @@ class ToolbarController
         return $this->redirectToLocation($data->getParentLocation());
     }
 
+    /**
+     * @param \Gie\EzToolbar\Form\Data\ToolbarData $data
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
     private function createAction(ToolbarData $data)
     {
         $contentType = $data->getContentType();
@@ -193,6 +212,11 @@ class ToolbarController
 
     }
 
+    /**
+     * @param \Gie\EzToolbar\Form\Data\ToolbarData $data
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response|void|null
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     */
     private function editAction(ToolbarData $data)
     {
         $content = $data->getContent();
@@ -230,7 +254,4 @@ class ToolbarController
         $url = $this->urlAliasService->reverseLookup($location);
         return new RedirectResponse($url->path);
     }
-
-
-
 }

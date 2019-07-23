@@ -60,6 +60,15 @@ class ToolbarManager
      */
     private $toolbarForm;
 
+    /**
+     * ToolbarManager constructor.
+     * @param \eZ\Publish\API\Repository\PermissionResolver $permissionResolver
+     * @param \eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper $globalHelper
+     * @param \eZ\Publish\API\Repository\ContentService $contentService
+     * @param \eZ\Publish\API\Repository\LocationService $locationService
+     * @param \eZ\Publish\API\Repository\UserService $userService
+     * @param \Symfony\Component\Form\FormFactory $factory
+     */
     public function __construct(
         PermissionResolver $permissionResolver,
         GlobalHelper $globalHelper,

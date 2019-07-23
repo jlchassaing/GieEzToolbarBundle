@@ -25,18 +25,34 @@ class ToolbarExtension extends AbstractExtension
      */
     private $toolbarManager;
 
+    /**
+     * ToolbarExtension constructor.
+     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
+     * @param \Gie\EzToolbar\Manager\ToolbarManager $toolbarManager
+     */
     public function __construct(EngineInterface $templating, ToolbarManager $toolbarManager)
     {
         $this->templating = $templating;
         $this->toolbarManager = $toolbarManager;
     }
 
+    /**
+     * @return array|\Twig\TwigFunction[]
+     */
     public function getFunctions() {
         return [
             new TwigFunction('ezToolbar', [$this,'displayToolbar'], ['is_safe' => ['html']]),
         ];
     }
 
+    /**
+     * @param \eZ\Publish\API\Repository\Values\Content\Location|null $location
+     * @return false|string|null
+     * @throws \Twig\Error\Error
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
+     */
     public function displayToolbar(?Location $location)
     {
         if ($this->toolbarManager->canUse()) {

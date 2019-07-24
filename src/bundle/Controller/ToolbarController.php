@@ -13,7 +13,6 @@ use EzSystems\RepositoryForms\Form\ActionDispatcher\ActionDispatcherInterface;
 use EzSystems\RepositoryForms\Form\Type\Content\ContentDraftCreateType;
 use Gie\EzToolbar\Form\Data\ToolbarData;
 use eZ\Publish\API\Repository\LocationService;
-use eZ\Publish\API\Repository\PermissionResolver;
 use eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper;
 use Gie\EzToolbar\Manager\ToolbarManager;
 use Symfony\Component\Form\FormFactory;
@@ -54,11 +53,6 @@ class ToolbarController
      * @var \eZ\Publish\API\Repository\URLAliasService
      */
     private $urlAliasService;
-
-    /**
-     * @var PermissionResolver
-     */
-    private $permissionResolver;
 
     /**
      * @var SubmitHandler
@@ -104,7 +98,6 @@ class ToolbarController
      * @param \eZ\Publish\API\Repository\ContentService $contentService
      * @param \eZ\Publish\API\Repository\ContentTypeService $contentTypeService
      * @param \eZ\Publish\API\Repository\URLAliasService $urlAliasService
-     * @param \eZ\Publish\API\Repository\PermissionResolver $permissionResolver
      * @param \EzSystems\EzPlatformAdminUi\Form\SubmitHandler $submitHandler
      * @param \Symfony\Component\Form\FormFactory $factory
      * @param \Symfony\Component\Routing\RouterInterface $router
@@ -119,7 +112,6 @@ class ToolbarController
         ContentService $contentService,
         ContentTypeService $contentTypeService,
         URLAliasService $urlAliasService,
-        PermissionResolver $permissionResolver,
         SubmitHandler $submitHandler,
         FormFactory $factory,
         RouterInterface $router,
@@ -134,7 +126,6 @@ class ToolbarController
         $this->contentService = $contentService;
         $this->contentTypeService = $contentTypeService;
         $this->languageService = $languageService;
-        $this->permissionResolver = $permissionResolver;
         $this->urlAliasService = $urlAliasService;
         $this->submitHandler = $submitHandler;
         $this->factory = $factory;
@@ -169,7 +160,6 @@ class ToolbarController
                 $data = $this->toolbarManager->getToolbarData();
 
                 return $this->getActionResponse($nextAction, $data);
-
             }
         }
         return $this->redirectToLocation($location);
@@ -209,7 +199,6 @@ class ToolbarController
             'language' => $currentLanguage->languageCode,
             'parentLocationId' => $parentLocation->id,
         ]));
-
     }
 
     /**
@@ -226,6 +215,7 @@ class ToolbarController
 
         $createContentDraft->fromVersionNo = $contentInfo->currentVersionNo;
         $createContentDraft->fromLanguage = $contentInfo->mainLanguageCode;
+
 
 
         $form = $this->factory->create(

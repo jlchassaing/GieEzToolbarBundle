@@ -6,21 +6,6 @@
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
-<trans-unit id="fdd229b7058acd06982eae1707b40fa67445e005" resname="role.policy.toolbar">
-  <source>Toolbar</source>
-  <target>Toolbar</target>
-  <note>key: role.policy.toolbar</note>
-</trans-unit>
-  <trans-unit id="7a7aa962d30d4588d662b16da23c777fb894d474" resname="role.policy.toolbar.all_functions">
-    <source>Toolbar / All functions</source>
-    <target>Toolbar / All functions</target>
-    <note>key: role.policy.toolbar.all_functions</note>
-  </trans-unit>
-<trans-unit id="55209abf9ecf3b82522dc7c3f3af688526705305" resname="role.policy.toolbar.use">
-  <source>Toolbar / Use</source>
-  <target>Toolbar / Use</target>
-  <note>key: role.policy.toolbar.use</note>
-</trans-unit>
 <trans-unit id="b9db8a148ed9b69e04b97235b0ec5051fb95c714" resname="eztoolbar.create">
   <source>Create</source>
   <target>Create</target>

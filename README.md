@@ -55,13 +55,16 @@ If you use and specific user instead of admin you need to set the user policy.
 Give the toolbar role policy to a user or a group whit no limitations. Once logged in on the
 front page with the matching user, the toolbar should appear.
 
+The toolbar will adjust to specific content type creation limitations.
+
+You should add version view rights without any limitation, the toolbar does 
+does not actually deal with version conflicts.
+
 ## Features
 
 You should be able to create, edit and cancel (create and edit).
 Many things to do :
- - filter classes according to user rights :
-    That is available in current master and will be used when in stable release.
-    
+   
  - the create new draft code to edit content is not satisfying. Needs some refactoring.
  
  - write feature and phpunit testing    

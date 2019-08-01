@@ -16,6 +16,11 @@
   <target>Edit</target>
   <note>key: eztoolbar.edit</note>
 </trans-unit>
+<trans-unit id="1d2cef9179608426e3c334a1942e5c41546ec7f8" resname="eztoolbar.trash">
+  <source>Trash</source>
+  <target>Trash</target>
+  <note>key: eztoolbar.trash</note>
+</trans-unit>
 <trans-unit id="eeb2d393413a3137b10a27e0dfb1ebdb743995a4" resname="eztoolbar.logedinas">
   <source>Current user : %userName%</source>
   <target>Current user : %userName%</target>

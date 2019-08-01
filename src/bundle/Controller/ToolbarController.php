@@ -4,10 +4,14 @@ namespace Gie\EzToolbarBundle\Controller;
 
 use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\ContentTypeService;
+use eZ\Publish\API\Repository\Exceptions\UnauthorizedException;
 use eZ\Publish\API\Repository\LanguageService;
+use eZ\Publish\API\Repository\TrashService;
 use eZ\Publish\API\Repository\URLAliasService;
 use eZ\Publish\API\Repository\Values\Content\Location;
+use EzSystems\EzPlatformAdminUi\Form\Data\Location\LocationTrashData;
 use EzSystems\EzPlatformAdminUi\Form\SubmitHandler;
+use EzSystems\EzPlatformAdminUi\Form\Type\Location\LocationTrashType;
 use EzSystems\RepositoryForms\Data\Content\CreateContentDraftData;
 use EzSystems\RepositoryForms\Form\ActionDispatcher\ActionDispatcherInterface;
 use EzSystems\RepositoryForms\Form\Type\Content\ContentDraftCreateType;
@@ -18,6 +22,7 @@ use Gie\EzToolbar\Manager\ToolbarManager;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Ldap\Exception\NotBoundException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -53,6 +58,9 @@ class ToolbarController
      * @var \eZ\Publish\API\Repository\URLAliasService
      */
     private $urlAliasService;
+
+    /** @var \eZ\Publish\API\Repository\TrashService */
+    private $trashService;
 
     /**
      * @var SubmitHandler
@@ -98,6 +106,7 @@ class ToolbarController
      * @param \eZ\Publish\API\Repository\ContentService $contentService
      * @param \eZ\Publish\API\Repository\ContentTypeService $contentTypeService
      * @param \eZ\Publish\API\Repository\URLAliasService $urlAliasService
+     * @param \eZ\Publish\API\Repository\TrashService $trashService
      * @param \EzSystems\EzPlatformAdminUi\Form\SubmitHandler $submitHandler
      * @param \Symfony\Component\Form\FormFactory $factory
      * @param \Symfony\Component\Routing\RouterInterface $router
@@ -112,6 +121,7 @@ class ToolbarController
         ContentService $contentService,
         ContentTypeService $contentTypeService,
         URLAliasService $urlAliasService,
+        TrashService $trashService,
         SubmitHandler $submitHandler,
         FormFactory $factory,
         RouterInterface $router,
@@ -127,6 +137,7 @@ class ToolbarController
         $this->contentTypeService = $contentTypeService;
         $this->languageService = $languageService;
         $this->urlAliasService = $urlAliasService;
+        $this->trashService = $trashService;
         $this->submitHandler = $submitHandler;
         $this->factory = $factory;
         $this->router = $router;
@@ -179,6 +190,8 @@ class ToolbarController
                 return $this->createAction($data);
             case 'edit':
                 return $this->editAction($data);
+            case 'trash':
+                return $this->trashAction($data);
         }
         return $this->redirectToLocation($data->getParentLocation());
     }
@@ -234,6 +247,24 @@ class ToolbarController
         }
     }
 
+    /**
+     * @param \Gie\EzToolbar\Form\Data\ToolbarData $data
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|void
+     */
+    private function trashAction(ToolbarData $data)
+    {
+        $parentLocationId = $data->getParentLocation()->parentLocationId;
+        try{
+            $this->trashService->trash($data->getParentLocation());
+            
+        } catch(NotBoundException $exception) {
+            dump($exception);
+        } catch( UnauthorizedException $exception){
+            dump($exception);
+        }
+
+        return $this->redirectToLocation($this->locationService->loadLocation($parentLocationId));
+    }
     /**
      * @param \eZ\Publish\API\Repository\Values\Content\Location $location
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|void

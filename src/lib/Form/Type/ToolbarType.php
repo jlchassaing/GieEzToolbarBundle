@@ -74,6 +74,7 @@ class ToolbarType extends AbstractType
 
         $restrictedContentTypesIds = [];
         $canEdit = true;
+        $canDelete = true;
         $isContainer = false;
 
         /** @var ToolbarData $toolbarData */
@@ -84,6 +85,18 @@ class ToolbarType extends AbstractType
             $restrictedContentTypesIds = $limitationsValues[Limitation::CONTENTTYPE];
             $canEdit = $this->getCanEdit($location, $content);
             $isContainer = $content->getContentType()->isContainer;
+
+            $canDelete = $this->permissionResolver->canUser(
+                'content',
+                'remove',
+                $content
+            );
+            $canTrashLocation = $this->permissionResolver->canUser(
+                'content',
+                'remove',
+                $location->getContentInfo(),
+                [$location]
+            );
         }
 
         $builder
@@ -117,13 +130,21 @@ class ToolbarType extends AbstractType
                     'disabled' => !$isContainer,
                 ]
             );
-        if ($canEdit)
-        {
+        if ($canEdit) {
             $builder->add(
                 'edit',
                 SubmitType::class,
                 [
                     'label' => 'eztoolbar.edit'
+                ]
+            );
+        }
+        if ($canDelete) {
+            $builder->add(
+                'trash',
+                SubmitType::class,
+                [
+                    'label' => 'eztoolbar.trash'
                 ]
             );
         }

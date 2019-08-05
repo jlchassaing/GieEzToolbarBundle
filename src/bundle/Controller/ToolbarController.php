@@ -22,9 +22,11 @@ use Gie\EzToolbar\Manager\ToolbarManager;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Ldap\Exception\NotBoundException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Component\Translation\Translator;
 
 class ToolbarController
 {
@@ -61,6 +63,12 @@ class ToolbarController
 
     /** @var \eZ\Publish\API\Repository\TrashService */
     private $trashService;
+
+    /** @var \Symfony\Component\HttpFoundation\Session\Session */
+    private $session;
+
+    /** @var \Symfony\Component\Translation\Translator */
+    private $translator;
 
     /**
      * @var SubmitHandler
@@ -107,6 +115,8 @@ class ToolbarController
      * @param \eZ\Publish\API\Repository\ContentTypeService $contentTypeService
      * @param \eZ\Publish\API\Repository\URLAliasService $urlAliasService
      * @param \eZ\Publish\API\Repository\TrashService $trashService
+     * @param \Symfony\Component\HttpFoundation\Session\Session $session
+     * @param \Symfony\Component\Translation\Translator $translator
      * @param \EzSystems\EzPlatformAdminUi\Form\SubmitHandler $submitHandler
      * @param \Symfony\Component\Form\FormFactory $factory
      * @param \Symfony\Component\Routing\RouterInterface $router
@@ -122,6 +132,8 @@ class ToolbarController
         ContentTypeService $contentTypeService,
         URLAliasService $urlAliasService,
         TrashService $trashService,
+        Session $session,
+        Translator $translator,
         SubmitHandler $submitHandler,
         FormFactory $factory,
         RouterInterface $router,
@@ -138,6 +150,8 @@ class ToolbarController
         $this->languageService = $languageService;
         $this->urlAliasService = $urlAliasService;
         $this->trashService = $trashService;
+        $this->session = $session;
+        $this->translator = $translator;
         $this->submitHandler = $submitHandler;
         $this->factory = $factory;
         $this->router = $router;
@@ -256,11 +270,20 @@ class ToolbarController
         $parentLocationId = $data->getParentLocation()->parentLocationId;
         try{
             $this->trashService->trash($data->getParentLocation());
+            $this->addFlash('notice',
+                $this->translator->trans('toolbar.content.deleted',
+                    [],
+                    'eztoolbar'));
             
         } catch(NotBoundException $exception) {
-            dump($exception);
+            $this->addFlash('error',
+                $this->translator->trans('toolbar.content.notFound',
+                    ['%name%' => $data->getParentLocation()->contentInfo->name],
+                    'eztoolbar'));
         } catch( UnauthorizedException $exception){
-            dump($exception);
+            $this->addFlash('error', $this->translator->trans('toolbar.unauthorized',
+                [],
+                'eztoolbar'));
         }
 
         return $this->redirectToLocation($this->locationService->loadLocation($parentLocationId));
@@ -274,5 +297,14 @@ class ToolbarController
     {
         $url = $this->urlAliasService->reverseLookup($location);
         return new RedirectResponse($url->path);
+    }
+
+    /**
+     * @param string $type message type arlert, warning, notice
+     * @param string $message
+     */
+    private function addFlash(string $type,string $message): void
+    {
+        $this->session->getFlashBag()->add($type,$message);
     }
 }

@@ -10,6 +10,7 @@ namespace Gie\EzToolbar\Templating\Twig;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use Gie\EzToolbar\Manager\ToolbarManager;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -24,16 +25,24 @@ class ToolbarExtension extends AbstractExtension
      * @var \Gie\EzToolbar\Manager\ToolbarManager
      */
     private $toolbarManager;
+    /** @var \Symfony\Component\HttpFoundation\Session\Session */
+    private $session;
 
     /**
      * ToolbarExtension constructor.
      * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
      * @param \Gie\EzToolbar\Manager\ToolbarManager $toolbarManager
+     * @param \Symfony\Component\HttpFoundation\Session\Session $session
      */
-    public function __construct(EngineInterface $templating, ToolbarManager $toolbarManager)
+    public function __construct(
+        EngineInterface $templating,
+        ToolbarManager $toolbarManager,
+        Session $session
+    )
     {
         $this->templating = $templating;
         $this->toolbarManager = $toolbarManager;
+        $this->session = $session;
     }
 
     /**
@@ -63,7 +72,8 @@ class ToolbarExtension extends AbstractExtension
                 [
                     'form' => $toolbarForm->createView(),
                     'currentUser' => $this->toolbarManager->getCurrentUser(),
-                    'location' => $location
+                    'location' => $location,
+                    'flashBag' => $this->session->getFlashBag()->all(),
                 ]);
         }
         return null;

@@ -31,6 +31,21 @@
   <target>Logout</target>
   <note>key: eztoolbar.logout</note>
 </trans-unit>
+<trans-unit id="361c14a59b1640cb9741404a6f06b5041b5034b4" resname="toolbar.content.notFound">
+  <source>Content %name% does not exist</source>
+  <target>Content %name% does not exist</target>0
+  <note>key: toolbar.content.notFound</note>
+</trans-unit>
+<trans-unit id="b21fb61213cab44e0ed92e06d03dd7ae72ece50f" resname="toolbar.content.deleted">
+  <source>Content successfully deleted</source>
+  <target>Content successfully deleted</target>
+  <note>key: toolbar.content.deleted</note>
+</trans-unit>
+<trans-unit id="r361c14a59b1640cb9741404a6f06b5041b5034b4" esname="toolbar.unauthorized">
+  <source>User does not have necessary credentials</source>
+  <target>User does not have necessary credentials</target>
+  <note>key: toolbar.unauthorized</note>
+</trans-unit>
     </body>
   </file>
 </xliff>

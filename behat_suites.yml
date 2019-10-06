@@ -4,4 +4,5 @@ eztoolbar:
             paths:
               - '%paths.base%/vendor/jlchassaing/gie_eztoolbar/features'
             contexts:
-                - Gie\EzToolbar\Behat\TestFiles\AuthenticationContext
+                - Gie\EzToolbar\Behat\Context\AuthenticationContext
+                - Gie\EzToolbar\Behat\Context\YamlConfigurationContext

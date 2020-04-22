@@ -133,7 +133,7 @@ class ToolbarController
         Session $session,
         Translator $translator,
         SubmitHandler $submitHandler,
-        FormFactory $factory,
+        \EzSystems\EzPlatformAdminUi\Form\Factory\FormFactory $factory,
         RouterInterface $router,
         GlobalHelper $globalHelper,
         ActionDispatcherInterface $actionDispatcher,
@@ -218,6 +218,7 @@ class ToolbarController
         $contentType = $data->getContentType();
         $parentLocation = $data->getParentLocation();
         $currentLanguage = $this->languageService->loadLanguage($this->languages[0]);
+
 
         return new RedirectResponse($this->router->generate('ez_content_create_no_draft', [
             'contentTypeIdentifier' => $contentType->identifier,

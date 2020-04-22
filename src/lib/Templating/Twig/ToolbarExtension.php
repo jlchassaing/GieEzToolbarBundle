@@ -8,6 +8,9 @@ namespace Gie\EzToolbar\Templating\Twig;
 
 
 use eZ\Publish\API\Repository\Values\Content\Location;
+use eZ\Publish\API\Repository\LanguageService;
+use EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentCreateData;
+use EzSystems\EzPlatformAdminUi\Form\Factory\FormFactory;
 use Gie\EzToolbar\Manager\ToolbarManager;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -27,7 +30,8 @@ class ToolbarExtension extends AbstractExtension
     private $toolbarManager;
     /** @var \Symfony\Component\HttpFoundation\Session\Session */
     private $session;
-
+private $factory;
+private $languageService;
     /**
      * ToolbarExtension constructor.
      * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
@@ -37,12 +41,16 @@ class ToolbarExtension extends AbstractExtension
     public function __construct(
         EngineInterface $templating,
         ToolbarManager $toolbarManager,
-        Session $session
+        Session $session,
+        FormFactory $factory,
+   LanguageService $languageService
     )
     {
         $this->templating = $templating;
         $this->toolbarManager = $toolbarManager;
         $this->session = $session;
+        $this->factory = $factory;
+        $this->languageService = $languageService;
     }
 
     /**
@@ -68,9 +76,14 @@ class ToolbarExtension extends AbstractExtension
             $toolbarForm = $this->toolbarManager
                 ->initToolbarForm($location)
                 ->getToolbarForm();
+            $contentCreateType = $this->factory->createContent(
+                $this->getContentCreateData($location)
+            );
+
             return $this->templating->render("@GieEzToolbar/toolbar/toolbar.html.twig",
                 [
                     'form' => $toolbarForm->createView(),
+                    'form_create' => $contentCreateType->createView(),
                     'currentUser' => $this->toolbarManager->getCurrentUser(),
                     'location' => $location,
                     'flashBag' => $this->session->getFlashBag()->all(),
@@ -80,5 +93,15 @@ class ToolbarExtension extends AbstractExtension
 
 
     }
+    private function getContentCreateData(?Location $location): ContentCreateData
+    {
+        $languages = $this->languageService->loadLanguages();
+        $language = 1 === \count($languages)
+            ? array_shift($languages)
+            : null;
+
+        return new ContentCreateData(null, $location, $language);
+    }
+
 
 }

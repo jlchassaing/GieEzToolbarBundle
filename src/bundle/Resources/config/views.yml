@@ -6,14 +6,14 @@ system:
     content_edit_view:
       full:
         toolbar_edit:
-          template: '@ezdesign/content/edit/edit.html.twig'
+          template: '@ezdesign/content/content_edit/content_edit.html.twig'
           match: true
           params:
-            viewbaseLayout: '@ezdesign/ui/layout.html.twig'
+            viewbaseLayout: '@ezdesign/layout.html.twig'
     content_create_view:
       full:
         toolbar_create:
-          template: '@ezdesign/content/create/create.html.twig'
+          template: '@ezdesign/content/content_edit/content_create.html.twig'
           match: true
           params:
-            viewbaseLayout: '@ezdesign/ui/layout.html.twig'
+            viewbaseLayout: '@ezdesign/layout.html.twig'

@@ -1,6 +1,6 @@
 ezdesign:
     design_list:
-        site: [site, toolbar, standard]
+        site: [site, standard]
 
 ezpublish:
     system:

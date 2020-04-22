@@ -12,7 +12,7 @@
         {%- endif -%}
     {%- endif -%}
     {%- set icon = label|split('.')[1] -%}
-    <button type="{{ type|default('button') }}" class="toolbar__button" {{ block('button_attributes') }}>
+    <button type="{{ type|default('button') }}" class="btn btn-primary" {{ block('button_attributes') }}>
         <svg class="ez-icon ez-icon-edit">
             <use xlink:href="{{ '/bundles/ezplatformadminui/img/ez-icons.svg#' ~ icon }}"></use>
         </svg> {{ translation_domain is same as(false) ? label : label|trans({}, translation_domain) }}

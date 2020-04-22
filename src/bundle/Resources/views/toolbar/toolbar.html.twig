@@ -1,8 +1,36 @@
-{{ encore_entry_link_tags('eztoolbar-layout-css', null, 'ezplatform') }}
-{% form_theme form '@GieEzToolbar/toolbar/form.html.twig' %}
-<div id="toolbar_layout" class="container-fluid" >
-  <span class="toolbar__title">Ez ToolBar </span>
-  {{ form(form, { 'action': path('gie_ez_toolbar_homepage', {locationId: location.id}) }) }}
+{{ encore_entry_link_tags('ezplatform-admin-ui-layout-css', null, 'ezplatform') }}
+{{ encore_entry_link_tags('ezplatform-admin-ui-location-view-css', null, 'ezplatform') }}
+{#{% form_theme form_create '@GieEzToolbar/toolbar/form.html.twig' %}#}
+{% form_theme form_create '@ezdesign/form_fields.html.twig' %}
+<div id="toolbar_layout" class="ez-table-header container-fluid" >
+  
+  <div class="ez-table-header__headline">Ez ToolBar </div>
+
+
+  <style>
+    .ez-extra-actions--create {
+      left: auto !important;
+    }
+
+    .ez-content-edit-container__close {
+      display: none;
+    }
+
+  </style>
+    <div class="ez-extra-actions-container">
+      {% include '@ezdesign/content/widgets/content_create.html.twig' with {'form': form_create} only %}
+      <button class="ez-btn--extra-actions ez-btn--create btn btn-secondary btn-block" data-actions="create" data-focus-element=".ez-instant-filter__input" id="content__sidebar_right__create-tab">
+
+        <svg class="ez-icon ez-icon-create">
+          <use xlink:href="/bundles/ezplatformadminui/img/ez-icons.svg#create"></use>
+        </svg>
+        Create
+
+      </button>
+    </div>
+
+
+  {#<div>{{ form(form, { 'action': path('gie_ez_toolbar_homepage', {locationId: location.id}) }) }}</div>#}
   <span class="toolbar__user_info">{{ 'eztoolbar.logedinas'|trans({'%userName%': currentUser.login},'eztoolbar') }} <a href="{{ path('logout') }}">{{ 'eztoolbar.logout'|trans({} ,'eztoolbar') }}</a></span>
   <script >
     {% for label, messages in flashBag %}
@@ -12,3 +40,5 @@
     {% endfor %}
   </script>
 </div>
+
+{{ encore_entry_script_tags('scripts', null, 'ezplatform') }}

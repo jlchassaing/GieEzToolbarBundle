@@ -10,6 +10,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class GieEzToolbarBundle extends Bundle
 {
+    const FRONT_EDIT_GROUP_NAME = 'front_edit';
+    
     public function build(ContainerBuilder $container)
     {
         parent::build($container);

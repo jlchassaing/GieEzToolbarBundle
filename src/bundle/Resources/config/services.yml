@@ -17,6 +17,11 @@ services:
       - { name: form.type }
 
   Gie\EzToolbar\Form\Event\UrlRedirectProcessor:
+    decorates: EzSystems\RepositoryForms\Form\Processor\SystemUrlRedirectProcessor
+    arguments:
+      $siteaccessGroups: '%ezpublish.siteaccess.groups%'
+      $systemUrlRedirectProcessor: '@Gie\EzToolbar\Form\Event\UrlRedirectProcessor.inner'
+
 
   Gie\EzToolbar\Manager\ToolbarManager:
 
@@ -25,6 +30,14 @@ services:
       - {name: twig.extension}
 
 
+  Gie\EzToolbar\Menu\ContentTopMenuBuilder:
+    public: true
+    lazy: true
+    arguments:
+      $userContentTypeIdentifier: '$user_content_type_identifier$'
+      $userGroupContentTypeIdentifier: '$user_group_content_type_identifier$'
+    tags:
+      - { name: knp_menu.menu_builder, method: build, alias: gie_ez_toolbar.content.toolbar_menu }
 
 
 

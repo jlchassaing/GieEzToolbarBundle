@@ -1,19 +1,21 @@
 system:
-  site_group:
+  front_edit:
     admin_ui_forms:
       content_edit_form_templates:
         - { template: '@ezdesign/content/form_fields.html.twig', priority: 0 }
+        - { template: '@ezdesign/matrix_fieldtype/content_edit_form_fields.html.twig', priority: 1 }
+        - { template: '@ezdesign/ezplatform_workflow/admin/content_edit/form_fields.html.twig', priority: 0 }
     content_edit_view:
       full:
-        toolbar_edit:
-          template: '@ezdesign/content/edit/edit.html.twig'
+        ezplatform_admin_ui:
+          template: '@ezdesign/content/content_edit/content_edit.html.twig'
           match: true
           params:
-            viewbaseLayout: '@ezdesign/ui/layout.html.twig'
+            viewbaseLayout: '@ezdesign/layout.html.twig'
     content_create_view:
       full:
-        toolbar_create:
-          template: '@ezdesign/content/create/create.html.twig'
+        ezplatform_admin_ui:
+          template: '@ezdesign/content/content_edit/content_create.html.twig'
           match: true
           params:
-            viewbaseLayout: '@ezdesign/ui/layout.html.twig'
+            viewbaseLayout: '@ezdesign/layout.html.twig'

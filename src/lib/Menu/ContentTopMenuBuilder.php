@@ -149,7 +149,10 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
         /** @var \eZ\Publish\API\Repository\Values\User\LookupLimitationResult $lookupLimitationsResult */
         $lookupLimitationsResult = $this->permissionChecker->getContentCreateLimitations($location);
 
-        $canCreateContentTypeIds = $lookupLimitationsResult->lookupPolicyLimitations[0]->limitations[0]->limitationValues;
+        $canCreateContentTypeIds = [];
+        if (count( $lookupLimitationsResult->lookupPolicyLimitations)) {
+            $canCreateContentTypeIds = $lookupLimitationsResult->lookupPolicyLimitations[0]->limitations[0]->limitationValues;
+        }
 
         $canCopyContent = in_array($contentType->id, $canCreateContentTypeIds);
 
@@ -165,6 +168,7 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
                     ->build(),
             ]
         );
+        
         $canDelete = $this->permissionResolver->canUser(
             'content',
             'remove',
@@ -241,7 +245,7 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
         ]);
 
         if (!$contentIsUser) {
-            $this->addEditMenuItem($menu, $contentIsUser, $canEdit);
+            $this->addEditMenuItem($menu, $canEdit);
         }
 
         $moveAttributes = [

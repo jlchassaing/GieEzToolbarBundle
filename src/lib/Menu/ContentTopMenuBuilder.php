@@ -146,7 +146,14 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
         /** @var ItemInterface|ItemInterface[] $menu */
         $menu = $this->factory->createItem('root');
 
+        /** @var \eZ\Publish\API\Repository\Values\User\LookupLimitationResult $lookupLimitationsResult */
         $lookupLimitationsResult = $this->permissionChecker->getContentCreateLimitations($location);
+
+        $canCreateContentTypeIds = $lookupLimitationsResult->lookupPolicyLimitations[0]->limitations[0]->limitationValues;
+
+        $canCopyContent = in_array($contentType->id, $canCreateContentTypeIds);
+
+
         $canCreate = $lookupLimitationsResult->hasAccess && $contentType->isContainer;
         $canEdit = $this->permissionResolver->canUser(
             'content',
@@ -163,9 +170,24 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
             'remove',
             $content
         );
+
+        $canHide = $this->permissionResolver->canUser(
+            'content',
+            'hide',
+            $location->getContentInfo(),
+            [$location]
+        );
+
         $canTrashLocation = $this->permissionResolver->canUser(
             'content',
             'remove',
+            $location->getContentInfo(),
+            [$location]
+        );
+
+        $canManageLocations = $this->permissionResolver->canUser(
+            'content',
+            'manage_locations',
             $location->getContentInfo(),
             [$location]
         );
@@ -181,6 +203,14 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
         ];
         $copySubtreeAttributes = [
             'class' => 'ez-btn--udw-copy-subtree',
+            'data-udw-config' => $this->udwExtension->renderUniversalDiscoveryWidgetConfig('single_container'),
+            'data-root-location' => $this->configResolver->getParameter(
+                'universal_discovery_widget_module.default_location_id'
+            ),
+        ];
+
+        $copyAttributes = [
+            'class' => 'btn--udw-copy',
             'data-udw-config' => $this->udwExtension->renderUniversalDiscoveryWidgetConfig('single_container'),
             'data-root-location' => $this->configResolver->getParameter(
                 'universal_discovery_widget_module.default_location_id'
@@ -210,36 +240,36 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
             ),
         ]);
 
-        $this->addEditMenuItem($menu, $contentIsUser, $canEdit);
+        if (!$contentIsUser) {
+            $this->addEditMenuItem($menu, $contentIsUser, $canEdit);
+        }
 
+        $moveAttributes = [
+            'class' => 'btn--udw-move',
+            'data-udw-config' => $this->udwExtension->renderUniversalDiscoveryWidgetConfig('single_container'),
+            'data-root-location' => $this->configResolver->getParameter(
+                'universal_discovery_widget_module.default_location_id'
+            ),
+        ];
         $menu->addChild(
             $this->createMenuItem(
                 self::ITEM__MOVE,
                 [
                     'extras' => ['icon' => 'move'],
-                    'attributes' => [
-                        'class' => 'btn--udw-move',
-                        'data-udw-config' => $this->udwExtension->renderUniversalDiscoveryWidgetConfig('single_container'),
-                        'data-root-location' => $this->configResolver->getParameter(
-                            'universal_discovery_widget_module.default_location_id'
-                        ),
-                    ],
+                    'attributes' =>  $canManageLocations ?
+                        $moveAttributes :  array_merge($moveAttributes, ['disabled' => 'disabled'])
                 ]
             )
         );
+
         if (!$contentIsUser && !$contentIsUserGroup) {
             $menu->addChild(
                 $this->createMenuItem(
                     self::ITEM__COPY,
                     [
                         'extras' => ['icon' => 'copy'],
-                        'attributes' => [
-                            'class' => 'btn--udw-copy',
-                            'data-udw-config' => $this->udwExtension->renderUniversalDiscoveryWidgetConfig('single_container'),
-                            'data-root-location' => $this->configResolver->getParameter(
-                                'universal_discovery_widget_module.default_location_id'
-                            ),
-                        ],
+                        'attributes' => $canCopyContent ?
+                            $copyAttributes : array_merge($copyAttributes, ['disabled' => 'disabled'])
                     ]
                 )
             );
@@ -258,24 +288,9 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
         }
 
         if ($content->getVersionInfo()->getContentInfo()->isHidden) {
-            $this->addRevealMenuItem($menu);
+            $this->addRevealMenuItem($menu, $canHide);
         } else {
-            $this->addHideMenuItem($menu);
-        }
-
-        if ($contentIsUser && $canDelete) {
-            $menu->addChild(
-                $this->createMenuItem(
-                    self::ITEM__DELETE,
-                    [
-                        'extras' => ['icon' => 'trash'],
-                        'attributes' => [
-                            'data-toggle' => 'modal',
-                            'data-target' => '#delete-user-modal',
-                        ],
-                    ]
-                )
-            );
+            $this->addHideMenuItem($menu, $canHide);
         }
 
         if (!$contentIsUser && 1 !== $location->depth && $canTrashLocation) {
@@ -320,58 +335,21 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
      * @param bool $contentIsUser
      * @param bool $canEdit
      */
-    private function addEditMenuItem(ItemInterface $menu, bool $contentIsUser, bool $canEdit): void
+    private function addEditMenuItem(ItemInterface $menu, bool $canEdit): void
     {
         $editAttributes = [
             'class' => 'ez-btn--extra-actions ez-btn--edit',
             'data-actions' => 'edit',
         ];
-        $editUserAttributes = [
-            'class' => 'ez-btn--extra-actions ez-btn--edit-user',
-            'data-actions' => 'edit-user',
-        ];
 
-        if ($contentIsUser) {
-            $menu->addChild(
-                $this->createMenuItem(
-                    self::ITEM__EDIT,
-                    [
-                        'extras' => ['icon' => 'edit'],
-                        'attributes' => $canEdit
-                            ? $editUserAttributes
-                            : array_merge($editUserAttributes, ['disabled' => 'disabled']),
-                    ]
-                )
-            );
-        } else {
-            $menu->addChild(
-                $this->createMenuItem(
-                    self::ITEM__EDIT,
-                    [
-                        'extras' => ['icon' => 'edit'],
-                        'attributes' => $canEdit
-                            ? $editAttributes
-                            : array_merge($editAttributes, ['disabled' => 'disabled']),
-                    ]
-                )
-            );
-        }
-    }
-
-    /**
-     * @param \Knp\Menu\ItemInterface $menu
-     */
-    private function addRevealMenuItem(ItemInterface $menu): void
-    {
         $menu->addChild(
             $this->createMenuItem(
-                self::ITEM__REVEAL,
+                self::ITEM__EDIT,
                 [
-                    'extras' => ['icon' => 'reveal'],
-                    'attributes' => [
-                        'data-actions' => 'reveal',
-                        'class' => 'ez-btn--reveal',
-                    ],
+                    'extras' => ['icon' => 'edit'],
+                    'attributes' => $canEdit
+                        ? $editAttributes
+                        : array_merge($editAttributes, ['disabled' => 'disabled']),
                 ]
             )
         );
@@ -380,17 +358,41 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
     /**
      * @param \Knp\Menu\ItemInterface $menu
      */
-    private function addHideMenuItem(ItemInterface $menu): void
+    private function addRevealMenuItem(ItemInterface $menu, bool $canHide): void
     {
+        $attributes = [
+            'data-actions' => 'reveal',
+            'class' => 'ez-btn--reveal',
+        ];
+        $menu->addChild(
+            $this->createMenuItem(
+                self::ITEM__REVEAL,
+                [
+                    'extras' => ['icon' => 'reveal'],
+                    'attributes' => $canHide ?
+                        $attributes : array_merge($attributes,['disabled' => 'disabled'])
+                ]
+            )
+        );
+    }
+
+    /**
+     * @param \Knp\Menu\ItemInterface $menu
+     */
+    private function addHideMenuItem(ItemInterface $menu, bool $canHide): void
+    {
+        $attributes = [
+            'data-actions' => 'hide',
+            'class' => 'ez-btn--hide',
+        ];
+
         $menu->addChild(
             $this->createMenuItem(
                 self::ITEM__HIDE,
                 [
                     'extras' => ['icon' => 'hide'],
-                    'attributes' => [
-                        'data-actions' => 'hide',
-                        'class' => 'ez-btn--hide',
-                    ],
+                    'attributes' => $canHide ?
+                        $attributes : array_merge($attributes, ['disabled' => 'disabled'])
                 ]
             )
         );

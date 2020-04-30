@@ -8,81 +8,102 @@ namespace Gie\EzToolbar\Manager;
 
 
 use eZ\Publish\API\Repository\ContentService;
+use eZ\Publish\API\Repository\LanguageService;
 use eZ\Publish\API\Repository\LocationService;
 use eZ\Publish\API\Repository\UserService;
+use eZ\Publish\API\Repository\Values\Content\Content;
+use eZ\Publish\API\Repository\Values\Content\ContentInfo;
+use eZ\Publish\API\Repository\Values\Content\Language;
 use eZ\Publish\API\Repository\Values\Content\Location;
+use eZ\Publish\API\Repository\Values\Content\VersionInfo;
 use eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper;
 use eZ\Publish\API\Repository\PermissionResolver;
+use EzSystems\EzPlatformAdminUi\Form\Data\Content\ContentVisibilityUpdateData;
+use EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentCreateData;
+use EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentEditData;
+use EzSystems\EzPlatformAdminUi\Form\Data\Location\LocationCopyData;
+use EzSystems\EzPlatformAdminUi\Form\Data\Location\LocationCopySubtreeData;
+use EzSystems\EzPlatformAdminUi\Form\Data\Location\LocationMoveData;
+use EzSystems\EzPlatformAdminUi\Form\Data\Location\LocationTrashContainerData;
+use EzSystems\EzPlatformAdminUi\Form\Data\Location\LocationTrashData;
+use EzSystems\EzPlatformAdminUi\Form\Data\Location\LocationTrashWithAssetData;
+use EzSystems\EzPlatformAdminUi\Form\Type\ChoiceList\Loader\ContentEditTranslationChoiceLoader;
+use EzSystems\EzPlatformAdminUi\Form\Type\Content\ContentVisibilityUpdateType;
+use EzSystems\EzPlatformAdminUi\Permission\LookupLimitationsTransformer;
+use EzSystems\EzPlatformAdminUi\Specification\Content\ContentHaveAssetRelation;
+use EzSystems\EzPlatformAdminUi\Specification\Content\ContentHaveUniqueRelation;
+use EzSystems\EzPlatformAdminUi\Specification\Location\HasChildren;
+use EzSystems\EzPlatformAdminUi\Specification\Location\IsContainer;
 use Gie\EzToolbar\Form\Data\ToolbarData;
 use Gie\EzToolbar\Form\Type\ToolbarType;
-use Symfony\Component\Form\FormFactory;
+use EzSystems\EzPlatformAdminUi\Form\Factory\FormFactory;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Util\StringUtil;
 use Symfony\Component\HttpFoundation\Request;
 
 class ToolbarManager
 {
-    /**
-     * @var \eZ\Publish\API\Repository\PermissionResolver
-     */
+    /** @var \eZ\Publish\API\Repository\PermissionResolver  */
     private $permissionResolver;
 
-    /**
-     * @var \eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper
-     */
+    /** @var \eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper  */
     private $globalHelper;
 
-    /**
-     * @var \eZ\Publish\API\Repository\ContentService
-     */
+    /** @var \eZ\Publish\API\Repository\ContentService  */
     private $contentService;
 
-    /**
-     * @var \eZ\Publish\API\Repository\LocationService
-     */
+   /** @var \eZ\Publish\API\Repository\LocationService  */
     private $locationService;
 
-    /**
-     * @var \Symfony\Component\Form\FormFactory
-     */
-    private $factory;
+    /** @var \eZ\Publish\API\Repository\LanguageService  */
+    private $languageService;
 
-    /**
-     * @var \eZ\Publish\API\Repository\Values\Content\Location
-     */
-    private $location;
+    /** @var \EzSystems\EzPlatformAdminUi\Form\Factory\FormFactory  */
+    private $formFactory;
 
+    /** @var \Symfony\Component\Form\FormFactoryInterface  */
+    private $sfFormFactory;
 
     /** @var \eZ\Publish\API\Repository\UserService */
     private $userService;
 
-    /**
-     * @var \Symfony\Component\Form\FormInterface
-     */
-    private $toolbarForm;
+    /** @var \EzSystems\EzPlatformAdminUi\Permission\LookupLimitationsTransformer  */
+    private $lookupLimitationsTransformer;
 
     /**
      * ToolbarManager constructor.
+     *
      * @param \eZ\Publish\API\Repository\PermissionResolver $permissionResolver
      * @param \eZ\Publish\Core\MVC\Symfony\Templating\GlobalHelper $globalHelper
      * @param \eZ\Publish\API\Repository\ContentService $contentService
      * @param \eZ\Publish\API\Repository\LocationService $locationService
+     * @param \eZ\Publish\API\Repository\LanguageService $languageService
      * @param \eZ\Publish\API\Repository\UserService $userService
-     * @param \Symfony\Component\Form\FormFactory $factory
+     * @param \EzSystems\EzPlatformAdminUi\Form\Factory\FormFactory $formFactory
+     * @param \Symfony\Component\Form\FormFactoryInterface $sfFormFactory
+     * @param \EzSystems\EzPlatformAdminUi\Permission\LookupLimitationsTransformer $lookupLimitationsTransformer
      */
     public function __construct(
         PermissionResolver $permissionResolver,
         GlobalHelper $globalHelper,
         ContentService $contentService,
         LocationService $locationService,
+        LanguageService $languageService,
         UserService $userService,
-        FormFactory $factory
+        FormFactory $formFactory,
+        FormFactoryInterface $sfFormFactory,
+        LookupLimitationsTransformer $lookupLimitationsTransformer
     ) {
         $this->permissionResolver = $permissionResolver;
         $this->globalHelper = $globalHelper;
         $this->contentService = $contentService;
         $this->locationService = $locationService;
+        $this->languageService = $languageService;
         $this->userService = $userService;
-        $this->factory = $factory;
+        $this->formFactory = $formFactory;
+        $this->sfFormFactory = $sfFormFactory;
+        $this->lookupLimitationsTransformer = $lookupLimitationsTransformer;
     }
 
     /**
@@ -95,79 +116,6 @@ class ToolbarManager
     }
 
     /**
-     * @param \eZ\Publish\API\Repository\Values\Content\Location|null $location
-     * @return \eZ\Publish\API\Repository\Values\Content\Location
-     */
-    public function setLocation(?Location $location = null)
-    {
-        if ($location === null) {
-            $location = $this->globalHelper->getRootLocation();
-        }
-        return $this->location = $location;
-    }
-
-    /**
-     * @param \eZ\Publish\API\Repository\Values\Content\Location
-     * @param \Gie\EzToolbar\Form\Data\ToolbarData|null $toolbarData
-     * @return $this
-     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
-     * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
-     */
-    public function initToolbarForm(?Location $location = null, ?ToolbarData $toolbarData = null)
-    {
-        $currentLocation = $this->setLocation($location);
-
-        $toolbarData = $toolbarData ?: new ToolbarData();
-        $toolbarData->setParentLocation($currentLocation);
-        $toolbarData->setContent($this->contentService->loadContent($currentLocation->contentId));
-
-        $name = StringUtil::fqcnToBlockPrefix(ToolbarType::class);
-        $this->toolbarForm = $this->factory->createNamed($name,
-            ToolbarType::class,
-            $toolbarData,
-            ['translation_domain' => 'eztoolbar']);
-        return $this;
-    }
-
-    /**
-     * @return \Symfony\Component\Form\FormInterface
-     */
-    public function getToolbarForm()
-    {
-        return $this->toolbarForm;
-    }
-
-    /**
-     * @return \Gie\EzToolbar\Form\Data\ToolbarData
-     */
-    public function getToolbarData()
-    {
-        return $this->toolbarForm->getData();
-    }
-
-    /**
-     * @return \eZ\Publish\API\Repository\Values\Content\Location
-     */
-    public function getLocation()
-    {
-        return $this->location;
-    }
-
-    /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @return $this
-     */
-    public function handleRequest(Request $request)
-    {
-        $this->toolbarForm->handleRequest($request);
-        $toolBarData = $this->getToolbarData();
-
-        $this->setLocation($toolBarData->getParentLocation());
-
-        return $this;
-    }
-
-    /**
      * @return \eZ\Publish\API\Repository\Values\User\User
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
      */
@@ -175,6 +123,158 @@ class ToolbarManager
     {
         return $this->userService->loadUser(
             $this->permissionResolver->getCurrentUserReference()->getUserId()
+        );
+    }
+
+    /**
+     * @param array $params
+     * @param \eZ\Publish\API\Repository\Values\Content\Location $location
+     * @param \eZ\Publish\API\Repository\Values\Content\Content $content
+     *
+     * @return array
+     * @throws \EzSystems\EzPlatformAdminUi\Exception\InvalidArgumentException
+     * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
+     * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
+     */
+    public function addContentActionForms(array $params, Location $location, Content $content):array
+    {
+        $versionInfo = $content->versionInfo;
+
+        $locationCopyType = $this->formFactory->copyLocation(
+            new LocationCopyData($location)
+        );
+
+        $locationMoveType = $this->formFactory->moveLocation(
+            new LocationMoveData($location)
+        );
+
+        $subitemsContentEdit = $this->formFactory->contentEdit(
+            null,
+            'form_subitems_content_edit'
+        );
+
+        $contentCreateType = $this->formFactory->createContent(
+            $this->getContentCreateData($location)
+        );
+
+        $locationCopySubtreeType = $this->formFactory->copyLocationSubtree(
+            new LocationCopySubtreeData($location)
+        );
+
+        $contentVisibilityUpdateForm = $this->sfFormFactory->create(
+            ContentVisibilityUpdateType::class,
+            new ContentVisibilityUpdateData(
+                $location->getContentInfo(),
+                $location,
+                $location->getContentInfo()->isHidden
+            )
+        );
+
+        $locationTrashType = $this->formFactory->trashLocation(
+            new LocationTrashData($location)
+        );
+
+        $contentEditType = $this->createContentEditForm(
+            $content->contentInfo,
+            $versionInfo,
+            null,
+            $location
+        );
+
+        $params +=[
+            'form_location_copy' => $locationCopyType->createView(),
+            'form_location_move' => $locationMoveType->createView(),
+            'form_content_create' => $contentCreateType->createView(),
+            'form_content_visibility_update' => $contentVisibilityUpdateForm->createView(),
+            'form_subitems_content_edit' => $subitemsContentEdit->createView(),
+            'form_location_copy_subtree' => $locationCopySubtreeType->createView(),
+            'form_location_trash' => $locationTrashType->createView(),
+            'form_content_edit' => $contentEditType->createView(),
+        ];
+
+        $contentHaveAssetRelation = new ContentHaveAssetRelation($this->contentService);
+
+        if ($contentHaveAssetRelation
+            ->and(new ContentHaveUniqueRelation($this->contentService))
+            ->isSatisfiedBy($content)
+        ) {
+            $trashWithAssetType = $this->formFactory->trashLocationWithAsset(
+                new LocationTrashWithAssetData($location)
+            );
+
+            $params += [
+                /** @deprecated since 2.5, to be removed in 3.0 */
+                'form_location_trash_with_single_asset' => $trashWithAssetType->createView(),
+            ];
+        } elseif ($contentHaveAssetRelation->isSatisfiedBy($content)) {
+            $locationTrashType = $this->formFactory->trashLocation(
+                new LocationTrashData($location)
+            );
+
+            $parmas += [
+                /** @deprecated since 2.5, to be removed in 3.0 */
+                'form_location_trash_with_asset' => $locationTrashType->createView(),
+            ];
+        }
+
+        $isContainer = new IsContainer();
+        $hasChildren = new HasChildren($this->locationService);
+
+        if ($isContainer->and($hasChildren)->isSatisfiedBy($location)) {
+            $trashLocationContainerForm = $this->formFactory->trashContainerLocation(
+                new LocationTrashContainerData($location)
+            );
+            $params +=[
+                /** @deprecated since 2.5, to be removed in 3.0 */
+                'form_location_trash_container' => $trashLocationContainerForm->createView(),
+            ];
+        }
+        return $params;
+    }
+
+    /**
+     * @param \eZ\Publish\API\Repository\Values\Content\Location|null $location
+     *
+     * @return \EzSystems\EzPlatformAdminUi\Form\Data\Content\Draft\ContentCreateData
+     */
+    private function getContentCreateData(?Location $location): ContentCreateData
+    {
+        $languages = $this->languageService->loadLanguages();
+        $language = 1 === \count($languages)
+            ? array_shift($languages)
+            : null;
+
+        return new ContentCreateData(null, $location, $language);
+    }
+
+    /**
+     * @param \eZ\Publish\API\Repository\Values\Content\ContentInfo|null $contentInfo
+     * @param \eZ\Publish\API\Repository\Values\Content\VersionInfo|null $versionInfo
+     * @param \eZ\Publish\API\Repository\Values\Content\Language|null $language
+     * @param \eZ\Publish\API\Repository\Values\Content\Location|null $location
+     *
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    private function createContentEditForm(
+        ?ContentInfo $contentInfo = null,
+        ?VersionInfo $versionInfo = null,
+        ?Language $language = null,
+        ?Location $location = null
+    ): FormInterface {
+        $languageCodes = $versionInfo->languageCodes ?? [];
+
+        return $this->formFactory->contentEdit(
+            new ContentEditData($contentInfo, null, $language, $location),
+            null,
+            [
+                'choice_loader' => new ContentEditTranslationChoiceLoader(
+                    $this->languageService,
+                    $this->permissionResolver,
+                    $contentInfo,
+                    $this->lookupLimitationsTransformer,
+                    $languageCodes
+                ),
+            ]
         );
     }
 

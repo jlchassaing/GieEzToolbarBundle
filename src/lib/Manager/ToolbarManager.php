@@ -112,7 +112,9 @@ class ToolbarManager
      */
     public function canUse()
     {
-        return $this->permissionResolver->hasAccess('toolbar', 'use') !== false;
+        $res = $this->permissionResolver->hasAccess('toolbar', 'use') !== false;
+        dump($res);
+        return $res;
     }
 
     /**

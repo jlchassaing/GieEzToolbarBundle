@@ -168,7 +168,7 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
                     ->build(),
             ]
         );
-        
+
         $canDelete = $this->permissionResolver->canUser(
             'content',
             'remove',

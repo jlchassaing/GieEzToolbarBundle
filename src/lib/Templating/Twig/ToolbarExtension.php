@@ -54,6 +54,7 @@ class ToolbarExtension extends AbstractExtension
     {
         $content = $location->getContent();
         $contentType = $content->getContentType();
+
         if ($this->toolbarManager->canUse()) {
 
             $params = [

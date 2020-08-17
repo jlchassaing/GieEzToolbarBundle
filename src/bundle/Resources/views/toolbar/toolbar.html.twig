@@ -1,9 +1,37 @@
+
+{#{ encore_entry_link_tags('ezplatform-admin-ui-layout-css', null, 'ezplatform') }}
+{{ encore_entry_link_tags('ezplatform-admin-ui-location-view-css', null, 'ezplatform') }#}
 {{ encore_entry_link_tags('eztoolbar-layout-css', null, 'ezplatform') }}
-{% form_theme form '@GieEzToolbar/toolbar/form.html.twig' %}
-<div id="toolbar_layout" class="container-fluid" >
+
+{% trans_default_domain 'locationview' %}
+
+{% if form_content_edit is defined %}
+  {% form_theme form_content_edit '@ezdesign/form_fields.html.twig' %}
+{% endif %}
+
+{% form_theme form_content_create '@ezdesign/form_fields.html.twig' %}
+
+<div id="toolbar_layout" class="toolbar_layout container-fluid" >
   <span class="toolbar__title">Ez ToolBar </span>
-  {{ form(form, { 'action': path('gie_ez_toolbar_homepage', {locationId: location.id}) }) }}
-  <span class="toolbar__user_info">{{ 'eztoolbar.logedinas'|trans({'%userName%': currentUser.login},'eztoolbar') }} <a href="{{ path('logout') }}">{{ 'eztoolbar.logout'|trans({} ,'eztoolbar') }}</a></span>
+
+  {% set content_top_menu = knp_menu_get('gie_ez_toolbar.content.toolbar_menu', [], {'location': location, 'content': content, 'content_type': contentType}) %}
+  {{ knp_menu_render(content_top_menu, {'template': '@ezdesign/parts/menu/eztoolbar.html.twig'}) }}
+
+  <div class="ez-extra-actions-container">
+    {% include '@ezdesign/content/widgets/content_create.html.twig' with {'form': form_content_create} only %}
+    {% if form_content_edit is defined and form_user_edit is not defined %}
+      {% include '@ezdesign/content/widgets/content_edit.html.twig' with {'form': form_content_edit} only %}
+
+    {% endif %}
+
+      {%  if form_location_trash is defined and form_user_delete is not defined %}
+          {% include '@ezdesign/content/modal_location_trash.html.twig' with {'form': form_location_trash} only %}
+      {% endif %}
+
+  </div>
+
+ {# {{ form(form, { 'action': path('gie_ez_toolbar_homepage', {locationId: location.id}) }) }}
+
   <script >
     {% for label, messages in flashBag %}
     {% for message in messages %}
@@ -11,4 +39,8 @@
         {% endfor %}
     {% endfor %}
   </script>
+  #}
+  <span class="toolbar__user_info">{{ 'eztoolbar.logedinas'|trans({'%userName%': currentUser.login},'eztoolbar') }} <a href="{{ path('logout') }}">{{ 'eztoolbar.logout'|trans({} ,'eztoolbar') }}</a></span>
+
 </div>
+

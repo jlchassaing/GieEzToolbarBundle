@@ -224,6 +224,7 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
         $copyLimit = $this->configResolver->getParameter(
             'subtree_operations.copy_subtree.limit'
         );
+
         $canCopySubtree = (new IsWithinCopySubtreeLimit(
             $copyLimit,
             $this->searchService
@@ -248,14 +249,14 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
             $this->addEditMenuItem($menu, $canEdit);
         }
 
-        $moveAttributes = [
+        /*$moveAttributes = [
             'class' => 'btn--udw-move',
             'data-udw-config' => $this->udwExtension->renderUniversalDiscoveryWidgetConfig('single_container'),
             'data-root-location' => $this->configResolver->getParameter(
                 'universal_discovery_widget_module.default_location_id'
             ),
-        ];
-        $menu->addChild(
+        ];*/
+        /*$menu->addChild(
             $this->createMenuItem(
                 self::ITEM__MOVE,
                 [
@@ -264,9 +265,9 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
                         $moveAttributes :  array_merge($moveAttributes, ['disabled' => 'disabled'])
                 ]
             )
-        );
+        );*/
 
-        if (!$contentIsUser && !$contentIsUserGroup) {
+        /*if (!$contentIsUser && !$contentIsUserGroup) {
             $menu->addChild(
                 $this->createMenuItem(
                     self::ITEM__COPY,
@@ -289,13 +290,13 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
                     ]
                 )
             );
-        }
+        }*/
 
-        if ($content->getVersionInfo()->getContentInfo()->isHidden) {
+        /*if ($content->getVersionInfo()->getContentInfo()->isHidden) {
             $this->addRevealMenuItem($menu, $canHide);
         } else {
             $this->addHideMenuItem($menu, $canHide);
-        }
+        }*/
 
         if (!$contentIsUser && 1 !== $location->depth && $canTrashLocation) {
             $menu->addChild(

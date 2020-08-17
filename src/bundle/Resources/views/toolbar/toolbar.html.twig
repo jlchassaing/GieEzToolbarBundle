@@ -21,7 +21,12 @@
     {% include '@ezdesign/content/widgets/content_create.html.twig' with {'form': form_content_create} only %}
     {% if form_content_edit is defined and form_user_edit is not defined %}
       {% include '@ezdesign/content/widgets/content_edit.html.twig' with {'form': form_content_edit} only %}
+
     {% endif %}
+
+      {%  if form_location_trash is defined and form_user_delete is not defined %}
+          {% include '@ezdesign/content/modal_location_trash.html.twig' with {'form': form_location_trash} only %}
+      {% endif %}
 
   </div>
 

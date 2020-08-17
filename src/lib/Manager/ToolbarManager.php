@@ -113,7 +113,6 @@ class ToolbarManager
     public function canUse()
     {
         $res = $this->permissionResolver->hasAccess('toolbar', 'use') !== false;
-        dump($res);
         return $res;
     }
 
@@ -184,12 +183,12 @@ class ToolbarManager
         );
 
         $params +=[
-            'form_location_copy' => $locationCopyType->createView(),
-            'form_location_move' => $locationMoveType->createView(),
+//            'form_location_copy' => $locationCopyType->createView(),
+//            'form_location_move' => $locationMoveType->createView(),
             'form_content_create' => $contentCreateType->createView(),
-            'form_content_visibility_update' => $contentVisibilityUpdateForm->createView(),
+//            'form_content_visibility_update' => $contentVisibilityUpdateForm->createView(),
             'form_subitems_content_edit' => $subitemsContentEdit->createView(),
-            'form_location_copy_subtree' => $locationCopySubtreeType->createView(),
+//            'form_location_copy_subtree' => $locationCopySubtreeType->createView(),
             'form_location_trash' => $locationTrashType->createView(),
             'form_content_edit' => $contentEditType->createView(),
         ];

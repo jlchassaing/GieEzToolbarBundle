@@ -5,7 +5,7 @@ services:
     public: false
 
   Gie\EzToolbar\Form\Event\UrlRedirectProcessor:
-    decorates: EzSystems\RepositoryForms\Form\Processor\SystemUrlRedirectProcessor
+    decorates: EzSystems\EzPlatformContentForms\Form\Processor\SystemUrlRedirectProcessor
     arguments:
       $siteaccessGroups: '%ezpublish.siteaccess.groups%'
       $systemUrlRedirectProcessor: '@Gie\EzToolbar\Form\Event\UrlRedirectProcessor.inner'

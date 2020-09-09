@@ -10,13 +10,16 @@ namespace Gie\EzToolbar\Form\Event;
 
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 
+use EzSystems\EzPlatformContentForms\Event\ContentFormEvents;
 use EzSystems\RepositoryForms\Event\FormActionEvent;
 use EzSystems\RepositoryForms\Event\RepositoryFormEvents;
-use EzSystems\EzPlatformAdminUi\RepositoryForms\Form\Processor\Content\UrlRedirectProcessor as BaseUrlRedirectProcessor;
+use EzSystems\EzPlatformAdminUi\Form\Processor\Content\UrlRedirectProcessor as BaseUrlRedirectProcessor;
 use Gie\EzToolbar\Specification\Siteaccess\IsFrontEdit;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\RouterInterface;
+
+
 
 class UrlRedirectProcessor implements EventSubscriberInterface
 {
@@ -26,7 +29,7 @@ class UrlRedirectProcessor implements EventSubscriberInterface
     /** @var \eZ\Publish\Core\MVC\Symfony\SiteAccess  */
     private $siteaccess;
 
-    /** @var \EzSystems\EzPlatformAdminUi\RepositoryForms\Form\Processor\Content\UrlRedirectProcessor  */
+   /** @var \EzSystems\EzPlatformAdminUi\Form\Processor\Content\UrlRedirectProcessor  */
     private $systemUrlRedirectProcessor;
     
     private $siteaccessGroups;
@@ -37,7 +40,7 @@ class UrlRedirectProcessor implements EventSubscriberInterface
      * @param array $siteaccessGroups
      * @param \eZ\Publish\Core\MVC\Symfony\SiteAccess $siteaccess
      * @param \Symfony\Component\Routing\RouterInterface $router
-     * @param \EzSystems\EzPlatformAdminUi\RepositoryForms\Form\Processor\Content\UrlRedirectProcessor $systemUrlRedirectProcessor
+     * @param \EzSystems\EzPlatformAdminUi\Form\Processor\Content\UrlRedirectProcessor $systemUrlRedirectProcessor
      */
     public function __construct(
         array $siteaccessGroups,
@@ -56,9 +59,10 @@ class UrlRedirectProcessor implements EventSubscriberInterface
      */
     public static function getSubscribedEvents(): array
     {
+
         return [
-            RepositoryFormEvents::CONTENT_PUBLISH => ['processRedirectAfterPublish', 2],
-            RepositoryFormEvents::CONTENT_CANCEL => ['processRedirectAfterCancel', 10],
+            ContentFormEvents::CONTENT_PUBLISH => ['processRedirectAfterPublish', 2],
+            ContentFormEvents::CONTENT_CANCEL => ['processRedirectAfterCancel', 10],
         ];
     }
 

@@ -9,12 +9,13 @@ namespace Gie\EzToolbar\Templating\Twig;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use Gie\EzToolbar\Manager\ToolbarManager;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class ToolbarExtension extends AbstractExtension
 {
-    /** @var \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface  */
+    /** @var \Twig\Environment  */
     private $templating;
 
     /** @var \Gie\EzToolbar\Manager\ToolbarManager  */
@@ -23,10 +24,10 @@ class ToolbarExtension extends AbstractExtension
     /**
      * ToolbarExtension constructor.
      *
-     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
+     * @param \Twig\Environment $templating
      * @param \Gie\EzToolbar\Manager\ToolbarManager $toolbarManager
      */
-    public function __construct(EngineInterface $templating, ToolbarManager $toolbarManager)
+    public function __construct(Environment $templating, ToolbarManager $toolbarManager)
     {
         $this->templating = $templating;
         $this->toolbarManager = $toolbarManager;

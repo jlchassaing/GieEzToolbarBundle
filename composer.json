@@ -30,6 +30,11 @@
     "ezsystems/ezplatform-user": "~1.0.3",
     "ezsystems/ezpublish-kernel": "~7.5.2",
     "ezsystems/repository-forms": "~2.5.1"
+  },
+  "extra":{
+  	"branch-alias": {
+		"dev-ez2.5":"1.1.x-dev"
+	}
   }
 
 }

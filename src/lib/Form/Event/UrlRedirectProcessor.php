@@ -11,11 +11,13 @@ namespace Gie\EzToolbar\Form\Event;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 
 use EzSystems\EzPlatformContentForms\Event\ContentFormEvents;
-use EzSystems\RepositoryForms\Event\FormActionEvent;
+//use EzSystems\RepositoryForms\Event\FormActionEvent;
+use EzSystems\EzPlatformContentForms\Event\FormActionEvent;
 use EzSystems\RepositoryForms\Event\RepositoryFormEvents;
 use EzSystems\EzPlatformAdminUi\Form\Processor\Content\UrlRedirectProcessor as BaseUrlRedirectProcessor;
 use Gie\EzToolbar\Specification\Siteaccess\IsFrontEdit;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -72,7 +74,7 @@ class UrlRedirectProcessor implements EventSubscriberInterface
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException
      * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException
      */
-    public function processRedirectAfterPublish(FormActionEvent $event): void
+    public function processRedirectAfterPublish(FormEvent $event): void
     {
         if ($this->isFrontEditSiteaccess()){
             $this->resolveSystemUrlRedirect($event);

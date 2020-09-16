@@ -2,9 +2,9 @@
 #toolbar_layout{
 
 
-  @import './web/bundles/ezplatformadminui/scss/ezplatform-bootstrap.scss';
-  @import './web/bundles/ezplatformadminui/scss/ezplatform.scss';
-  @import './web/bundles/ezplatformadminuimodules/scss/ezplatform-modules.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/ezplatform-bootstrap.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/ezplatform.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/ui/ezplatform-modules.scss';
 
   background-color: #a8c8d5;
   font-family: "DejaVu Sans",Arial, Helvetica, sans-serif;
@@ -160,14 +160,14 @@ body {
 
 
 .ez-modal-wrapper{
-  @import './web/bundles/ezplatformadminui/scss/_custom.scss';
-  @import './web/bundles/ezplatformadminui/scss/functions/calculate.rem.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_custom.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/functions/calculate.rem.scss';
 
-  @import './web/bundles/ezplatformadminui/scss/_buttons.scss';
-  @import './web/bundles/ezplatformadminui/scss/_icons.scss';
-  @import './web/bundles/ezplatformadminui/scss/_mixins.scss';
-  @import './web/bundles/ezplatformadminui/scss/_tables.scss';
-  @import './web/bundles/ezplatformadminui/scss/_modals.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_buttons.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_icons.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_mixins.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_tables.scss';
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_modals.scss';
   .modal{
     *, ::before, ::after {
       box-sizing: border-box;

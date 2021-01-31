@@ -53,6 +53,11 @@ class ToolbarExtension extends AbstractExtension
      */
     public function displayToolbar(?Location $location)
     {
+
+        if (empty($location)) {
+            return null;
+        }
+
         $content = $location->getContent();
         $contentType = $content->getContentType();
 

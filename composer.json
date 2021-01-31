@@ -21,6 +21,11 @@
   },
   "require": {
     "php": "^7.0"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-ez3": "3.x-dev"
+    }
   }
 
 }

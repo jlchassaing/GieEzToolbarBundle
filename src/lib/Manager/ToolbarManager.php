@@ -222,8 +222,8 @@ class ToolbarManager
         $hasChildren = new HasChildren($this->locationService);
 
         if ($isContainer->and($hasChildren)->isSatisfiedBy($location)) {
-            $trashLocationContainerForm = $this->formFactory->trashContainerLocation(
-                new LocationTrashContainerData($location)
+            $trashLocationContainerForm = $this->formFactory->trashLocation(
+                new LocationTrashData($location)
             );
             $params +=[
                 /** @deprecated since 2.5, to be removed in 3.0 */

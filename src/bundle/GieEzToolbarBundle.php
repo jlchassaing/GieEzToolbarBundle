@@ -4,6 +4,7 @@
  */
 namespace Gie\EzToolbarBundle;
 
+use EzSystems\EzPlatformAdminUi\Security\Authentication\RedirectToDashboardAuthenticationSuccessHandler;
 use Gie\EzToolbarBundle\security\EzToolbarPolicyProvider;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

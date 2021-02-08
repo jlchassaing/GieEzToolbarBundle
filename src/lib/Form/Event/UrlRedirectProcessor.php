@@ -108,7 +108,12 @@ class UrlRedirectProcessor implements EventSubscriberInterface
 
         $location = $event->getOption('referrerLocation');
 
-        $event->setResponse(new RedirectResponse($this->router->generate($location)));
+        dump($event);die();
+        $event->setResponse(
+            new RedirectResponse(
+                $this->router->generate('ez_urlalias',['locationId' => $location->id])
+            )
+        );
     }
 
     /**

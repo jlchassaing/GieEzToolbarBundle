@@ -6,10 +6,10 @@
 {% trans_default_domain 'locationview' %}
 
 {% if form_content_edit is defined %}
-  {% form_theme form_content_edit '@ezdesign/form_fields.html.twig' %}
+  {% form_theme form_content_edit '@ezdesign/ui/form_fields.html.twig' %}
 {% endif %}
 
-{% form_theme form_content_create '@ezdesign/form_fields.html.twig' %}
+{% form_theme form_content_create '@ezdesign/ui/form_fields.html.twig' %}
 
 <div id="toolbar_layout" class="toolbar_layout container-fluid" >
   <span class="toolbar__title">Ez ToolBar </span>
@@ -18,14 +18,14 @@
   {{ knp_menu_render(content_top_menu, {'template': '@ezdesign/parts/menu/eztoolbar.html.twig'}) }}
 
   <div class="ez-extra-actions-container">
-    {% include '@ezdesign/content/widgets/content_create.html.twig' with {'form': form_content_create} only %}
+    {% include '@ezdesign/content/widget/content_create.html.twig' with {'form': form_content_create} only %}
     {% if form_content_edit is defined and form_user_edit is not defined %}
-      {% include '@ezdesign/content/widgets/content_edit.html.twig' with {'form': form_content_edit} only %}
+      {% include '@ezdesign/content/widget/content_edit.html.twig' with {'form': form_content_edit} only %}
 
     {% endif %}
 
       {%  if form_location_trash is defined and form_user_delete is not defined %}
-          {% include '@ezdesign/content/modal_location_trash.html.twig' with {'form': form_location_trash} only %}
+          {% include '@ezdesign/content/modal/location_trash.html.twig' with {'form': form_location_trash} only %}
       {% endif %}
 
   </div>

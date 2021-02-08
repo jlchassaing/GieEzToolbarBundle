@@ -8,42 +8,42 @@
     <body>
 <trans-unit id="b9db8a148ed9b69e04b97235b0ec5051fb95c714" resname="eztoolbar.create">
   <source>Create</source>
-  <target>Create</target>
+  <target>Créer</target>
   <note>key: eztoolbar.create</note>
 </trans-unit>
 <trans-unit id="eeb2d393413a3137b10a27e0dfb1ebdb743995a4" resname="eztoolbar.edit">
   <source>Edit</source>
-  <target>Edit</target>
+  <target>Modifier</target>
   <note>key: eztoolbar.edit</note>
 </trans-unit>
 <trans-unit id="1d2cef9179608426e3c334a1942e5c41546ec7f8" resname="eztoolbar.trash">
   <source>Trash</source>
-  <target>Trash</target>
+  <target>Supprimer</target>
   <note>key: eztoolbar.trash</note>
 </trans-unit>
 <trans-unit id="eeb2d393413a3137b10a27e0dfb1ebdb743995a4" resname="eztoolbar.logedinas">
   <source>Current user : %userName%</source>
-  <target>Current user : %userName%</target>
+  <target>Utilisateur : %userName%</target>
   <note>key: eztoolbar.logedinas</note>
 </trans-unit>
 <trans-unit id="eeb2d393413a3137b10a27e0dfb1ebdb743995a4" resname="eztoolbar.logout">
   <source>Logout</source>
-  <target>Logout</target>
+  <target>Se déconnecter</target>
   <note>key: eztoolbar.logout</note>
 </trans-unit>
 <trans-unit id="361c14a59b1640cb9741404a6f06b5041b5034b4" resname="toolbar.content.notFound">
   <source>Content %name% does not exist</source>
-  <target>Content %name% does not exist</target>0
+  <target>Le contenu %name% n'existe pas</target>
   <note>key: toolbar.content.notFound</note>
 </trans-unit>
 <trans-unit id="b21fb61213cab44e0ed92e06d03dd7ae72ece50f" resname="toolbar.content.deleted">
   <source>Content successfully deleted</source>
-  <target>Content successfully deleted</target>
+  <target>Contenu supprimé</target>
   <note>key: toolbar.content.deleted</note>
 </trans-unit>
 <trans-unit id="r361c14a59b1640cb9741404a6f06b5041b5034b4" resname="toolbar.unauthorized">
   <source>User does not have necessary credentials</source>
-  <target>User does not have necessary credentials</target>
+  <target>L'utilisateur n'a pas les droits nécessaires</target>
   <note>key: toolbar.unauthorized</note>
 </trans-unit>
     </body>

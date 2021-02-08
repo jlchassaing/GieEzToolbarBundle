@@ -13,6 +13,7 @@ use eZ\Publish\API\Repository\Values\ContentType\ContentType;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use eZ\Publish\SPI\Limitation\Target\Builder\VersionBuilder;
 use EzSystems\EzPlatformAdminUi\Menu\AbstractBuilder;
+use EzSystems\EzPlatformAdminUi\UniversalDiscovery\ConfigResolver;
 use Gie\EzToolbar\Menu\Event\ConfigureMenuEvent;
 use EzSystems\EzPlatformAdminUi\Menu\MenuItemFactory;
 use EzSystems\EzPlatformAdminUi\Permission\PermissionCheckerInterface;
@@ -50,6 +51,9 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
     /** @var \eZ\Publish\Core\MVC\ConfigResolverInterface */
     private $configResolver;
 
+    /** @var \EzSystems\EzPlatformAdminUi\UniversalDiscovery\ConfigResolver  */
+    private $udwConfigResolver;
+
     /** @var \eZ\Publish\API\Repository\ContentTypeService */
     private $contentTypeService;
 
@@ -85,28 +89,30 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
      * @param \eZ\Publish\API\Repository\ContentService $contentService
      * @param \eZ\Publish\API\Repository\LocationService $locationService
      * @param \EzSystems\EzPlatformAdminUi\Permission\PermissionCheckerInterface $permissionChecker
-     * @param array $userContentTypeIdentifier
-     * @param array $userGroupContentTypeIdentifier
+     * @param string $userContentTypeIdentifier
+     * @param string $userGroupContentTypeIdentifier
      */
     public function __construct(
         MenuItemFactory $factory,
         EventDispatcherInterface $eventDispatcher,
         PermissionResolver $permissionResolver,
         ConfigResolverInterface $configResolver,
+        ConfigResolver $udwConfigResolver,
         ContentTypeService $contentTypeService,
         SearchService $searchService,
         UniversalDiscoveryExtension $udwExtension,
         ContentService $contentService,
         LocationService $locationService,
         PermissionCheckerInterface $permissionChecker,
-        array $userContentTypeIdentifier,
-        array $userGroupContentTypeIdentifier
+        string $userContentTypeIdentifier,
+        string $userGroupContentTypeIdentifier
     ) {
         parent::__construct($factory, $eventDispatcher);
 
         $this->permissionResolver = $permissionResolver;
         $this->configResolver = $configResolver;
         $this->contentTypeService = $contentTypeService;
+        $this->udwConfigResolver = $udwConfigResolver;
         $this->searchService = $searchService;
         $this->udwExtension = $udwExtension;
         $this->contentService = $contentService;
@@ -148,7 +154,7 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
 
         /** @var \eZ\Publish\API\Repository\Values\User\LookupLimitationResult $lookupLimitationsResult */
         $lookupLimitationsResult = $this->permissionChecker->getContentCreateLimitations($location);
-
+        $startingLocationId = $this->udwConfigResolver->getConfig('default')['starting_location_id'];
         $canCreateContentTypeIds = [];
         if (count( $lookupLimitationsResult->lookupPolicyLimitations)) {
             $canCreateContentTypeIds = $lookupLimitationsResult->lookupPolicyLimitations[0]->limitations[0]->limitationValues;
@@ -208,17 +214,13 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
         $copySubtreeAttributes = [
             'class' => 'ez-btn--udw-copy-subtree',
             'data-udw-config' => $this->udwExtension->renderUniversalDiscoveryWidgetConfig('single_container'),
-            'data-root-location' => $this->configResolver->getParameter(
-                'universal_discovery_widget_module.default_location_id'
-            ),
+            'data-root-location' =>  $startingLocationId,
         ];
 
         $copyAttributes = [
             'class' => 'btn--udw-copy',
             'data-udw-config' => $this->udwExtension->renderUniversalDiscoveryWidgetConfig('single_container'),
-            'data-root-location' => $this->configResolver->getParameter(
-                'universal_discovery_widget_module.default_location_id'
-            ),
+            'data-root-location' => $startingLocationId,
         ];
 
         $copyLimit = $this->configResolver->getParameter(
@@ -230,8 +232,8 @@ class ContentTopMenuBuilder extends AbstractBuilder implements TranslationContai
             $this->searchService
         ))->and((new IsRoot())->not())->isSatisfiedBy($location);
 
-        $contentIsUser = (new ContentTypeIsUser($this->userContentTypeIdentifier))->isSatisfiedBy($contentType);
-        $contentIsUserGroup = (new ContentTypeIsUserGroup($this->userGroupContentTypeIdentifier))->isSatisfiedBy($contentType);
+        $contentIsUser = (new ContentTypeIsUser([$this->userContentTypeIdentifier]))->isSatisfiedBy($contentType);
+        $contentIsUserGroup = (new ContentTypeIsUserGroup([$this->userGroupContentTypeIdentifier]))->isSatisfiedBy($contentType);
 
         $menu->setChildren([
             self::ITEM__CREATE => $this->createMenuItem(

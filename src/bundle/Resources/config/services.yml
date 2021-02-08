@@ -4,11 +4,11 @@ services:
     autoconfigure: true
     public: false
 
-  Gie\EzToolbar\Form\Event\UrlRedirectProcessor:
-    decorates: EzSystems\EzPlatformContentForms\Form\Processor\SystemUrlRedirectProcessor
-    arguments:
-      $siteaccessGroups: '%ezpublish.siteaccess.groups%'
-      $systemUrlRedirectProcessor: '@Gie\EzToolbar\Form\Event\UrlRedirectProcessor.inner'
+#  Gie\EzToolbar\Form\Event\UrlRedirectProcessor:
+#    decorates: EzSystems\EzPlatformContentForms\Form\Processor\SystemUrlRedirectProcessor
+#    arguments:
+#      $siteaccessGroups: '%ezpublish.siteaccess.groups%'
+#      $systemUrlRedirectProcessor: '@Gie\EzToolbar\Form\Event\UrlRedirectProcessor.inner'
 
 
   Gie\EzToolbar\Manager\ToolbarManager:
@@ -26,6 +26,8 @@ services:
       $userGroupContentTypeIdentifier: '$user_group_content_type_identifier$'
     tags:
       - { name: knp_menu.menu_builder, method: build, alias: gie_ez_toolbar.content.toolbar_menu }
+
+
 
 
 

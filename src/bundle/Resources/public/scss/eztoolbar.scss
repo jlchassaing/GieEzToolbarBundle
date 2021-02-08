@@ -162,7 +162,7 @@ body {
 .ez-modal-wrapper{
   @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_custom.scss';
   @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/functions/calculate.rem.scss';
-
+  @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/mixins/_general.scss';
   @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_buttons.scss';
   @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_icons.scss';
   @import './vendor/ezsystems/ezplatform-admin-ui/src/bundle/Resources/public/scss/_mixins.scss';

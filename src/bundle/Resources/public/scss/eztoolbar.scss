@@ -17,10 +17,7 @@
   right: 0;
   padding: 0 10px;
   z-index: 100000;
-
-  .btn{
-    font-size: 1.5rem;
-  }
+  
   .toolbar__title {
     font-weight: normal;
     font-size:1.8em;
@@ -70,6 +67,10 @@
     width: 175px;
     margin: 4px;
 
+  }
+
+  .btn-block + .btn-block {
+    margin-top: auto;
   }
 
 

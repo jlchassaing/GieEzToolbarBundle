@@ -273,7 +273,8 @@ class ToolbarManager
                     $this->permissionResolver,
                     $contentInfo,
                     $this->lookupLimitationsTransformer,
-                    $languageCodes
+                    $languageCodes,
+                    $this->locationService
                 ),
             ]
         );
